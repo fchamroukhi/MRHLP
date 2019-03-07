@@ -6,7 +6,8 @@ MyData <- setRefClass(
   fields = list(
     x="matrix",
     y="matrix",
-    m="numeric"),
+    m="numeric",
+    d="numeric"),
 
   # Set the methods
   methods=list(
@@ -26,7 +27,8 @@ MyData <- setRefClass(
 
 
     setDataProperties = function(){
-      m <<- length(y)
+      m <<- nrow(y)
+      d <<- ncol(y)
     }
   )
 )
