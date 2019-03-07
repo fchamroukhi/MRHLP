@@ -3,6 +3,8 @@ source("R/dataset.R")
 source("R/MixModel.R")
 source("R/ModelOptions.R")
 source("R/enums.R")
+source("R/RegressionDesigner.R")
+#source("R/MixParam.R")
 
 testDataSets <- function(){
   fileName = "R/datasets/simulated_time_series.mat"
@@ -42,3 +44,36 @@ testMixOptions <- function(){
 }
 
 modelOptions <- testMixOptions()
+
+testRegressionDesigner <- function(){
+  mixModel <- testMixModel()
+  phi <- RegressionDesigner$new()
+  phi$setPhi1(mixModel$x,mixModel$p,mixModel$q)
+  return(phi)
+}
+
+regDesigner <- testRegressionDesigner()
+
+
+
+
+
+
+
+
+
+
+
+
+
+testInitializeParameters <- function(){
+  try_EM <- 1
+  phi <- RegressionDesigner$new()
+  phi$setPhiN(mixModel$x,mixModel$p,mixModel$q, mixModel$n)
+  # Initialization
+  mixParam <- MixParam(mixModel, modelOptions)
+  mixParam$initRegressionParam(phi$XBeta, y, K, variance_types$hetereskedastic, try_EM)
+  return(mixParam)
+}
+
+#mixParam <- testInitializeParameters()
