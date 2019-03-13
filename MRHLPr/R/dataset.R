@@ -19,7 +19,7 @@ MyData <- setRefClass(
       x <<- data$x
       y <<- data$y
 
-      if (ncol(y)!=1){
+      if (ncol(y)>nrow(y)){
         y<<-t(y)
       }
       setDataProperties()

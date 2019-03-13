@@ -19,7 +19,7 @@ MixParam <- setRefClass(
        m <- ncol(XBeta) # P
 
        if (try_algo==1){ #  uniform segmentation into K contiguous segments, and then a regression
-          zi <- round(m/K)-1
+          zi <- round(n/K)-1
 
           s <- 0
 
@@ -29,9 +29,6 @@ MixParam <- setRefClass(
 
             yk <- y[i:j,]
             Xk <- XBeta[i:j,]
-
-            betag[,,k] <<-  solve(t(Xk)%*%Xk)%*%t(Xk)%*%yk
-
 
             muk <- Xk %*% betag[,,k]
             sk <- t(yk - muk) %*% (yk - muk)
@@ -69,7 +66,7 @@ MixParam <- setRefClass(
            Xk <- XBeta[i:j,]
 
 
-           beta_k[,,k] <<- solve(t(Xk)%*%Xk)%*%t(Xk)%*%yk
+           betag[,,k] <<- solve(t(Xk)%*%Xk)%*%t(Xk)%*%yk
 
            muk <- Xk %*% betag[,,k]
            sk <- t(yk - muk) %*% (yk - muk)
@@ -91,12 +88,12 @@ MixParam <- setRefClass(
 MixParam<-function(mixModel, options){
   #mixModel <- mixModel
   Wg <- rand(mixModel$q+1, mixModel$K-1)
-  betag <- array(NA, dim=c(mixModel$p+1, mixModel$m, mixModel$K))
+  betag <- array(NA, dim=c(mixModel$p+1, mixModel$d, mixModel$K))
   if (options$variance_type == variance_types$homoskedastic){
-    sigmag <- matrix(NA, mixModel$m, mixModel$m)
+    sigmag <- matrix(NA, mixModel$d, mixModel$d)
   }
   else{
-    sigmag <- array(NA, dim = c(mixModel$m, mixModel$m, mixModel$K))
+    sigmag <- array(NA, dim = c(mixModel$d, mixModel$d, mixModel$K))
   }
   new("MixParam", Wg=Wg, betag=betag, sigmag=sigmag)
 }

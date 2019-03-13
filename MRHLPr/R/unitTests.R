@@ -4,7 +4,7 @@ source("R/MixModel.R")
 source("R/ModelOptions.R")
 source("R/enums.R")
 source("R/RegressionDesigner.R")
-#source("R/MixParam.R")
+source("R/MixParam.R")
 
 testDataSets <- function(){
   fileName = "R/datasets/simulated_time_series.mat"
@@ -58,22 +58,25 @@ regDesigner <- testRegressionDesigner()
 
 
 
-
-
-
-
-
-
-
-
 testInitializeParameters <- function(){
+  fileName = "R/datasets/simulated_time_series.mat"
+  mixData <- MyData$new()
+  mixData$setDataFromMat(fileName)
+
+  # setting the model
+  K <- 5; # number of regimes (mixture components)
+  p <- 3; # dimension of beta' (order of the polynomial regressors)
+  q <- 1; # dimension of w (ordre of the logistic regression: to be set to 1 for segmentation)
+  mixModel <- MixModel(mixData,K,p,q)
+
   try_EM <- 1
   phi <- RegressionDesigner$new()
-  phi$setPhiN(mixModel$x,mixModel$p,mixModel$q, mixModel$n)
+  phi$setPhi1(mixModel$x,mixModel$p,mixModel$q)
+
   # Initialization
   mixParam <- MixParam(mixModel, modelOptions)
-  mixParam$initRegressionParam(phi$XBeta, y, K, variance_types$hetereskedastic, try_EM)
+  mixParam$initRegressionParam(phi$XBeta, mixModel$y, mixModel$K, variance_types$hetereskedastic, try_EM)
   return(mixParam)
 }
 
-#mixParam <- testInitializeParameters()
+mixParam <- testInitializeParameters()
