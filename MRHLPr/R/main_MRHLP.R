@@ -45,49 +45,47 @@
 %
 "
 rm(list = ls())
-source("R/dataset.R")
+source("R/FData.R")
+source("R/ModelRHLP.R")
 source("R/enums.R")
-source("R/MixModel.R")
-source("R/ModelOptions.R")
 source("R/ModelLearner.R")
 
 
-# loading and setting the data
-fileName = "R/datasets/simulated_time_series.mat"
-mixData <- MyData$new()
-mixData$setDataFromMat(fileName)
+# Building matrices for regression
+load("data/simulatedTimeSeries.RData")
+fData <- FData$new()
+fData$setData(X, Y)
 
-# setting the model
-K <- 5; # number of regimes (mixture components)
-p <- 3; # dimension of beta' (order of the polynomial regressors)
-q <- 1; # dimension of w (ordre of the logistic regression: to be set to 1 for segmentation)
-mixModel <- MixModel(mixData,K,p,q)
+K <- 5 # number of regimes (mixture components)
+p <- 3 # dimension of beta (order of the polynomial regressors)
+q <- 1 # dimension of w (order of the logistic regression: to be set to 1 for segmentation)
+variance_type <- variance_types$hetereskedastic
+
+modelMRHLP <- ModelMRHLP(fData, K, p, q)
 
 # setting the model options
-n_tries <- 1 # number of tries EM/CEM to run
-max_iter <- 1500 # maximum number of iteration in the EM/CEM algorithm
-threshold <- 1e-6 # threshold to check the concergence
-verbose <- TRUE # verbose the EM/CEM algorithm
-verbose_IRLS <- FALSE # verbose the IRLS algorithm
-modelOptions <- ModelOptions(n_tries, max_iter, threshold, verbose, verbose_IRLS, variance_types$hetereskedastic)
+n_tries <- 1
+max_iter = 1500
+threshold <- 1e-6
+verbose <- TRUE
+verbose_IRLS <- FALSE
+
 
 ####
 # EM Algorithm
 ####
 # 1. running the em algorithm giving mixModel (data, and model itself) and the modelOptions
-solution <- EM(mixModel, modelOptions)
-# 2. getting the mixture parameters solution
-mixParamSolution <- solution[[1]]
-# 3. getting the mixture stats solution
-mixStatsSolution <- solution[[2]]
+solution <- EM(modelMRHLP, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 
 # show the results
-mixStatsSolution$showDataClusterSegmentation(mixModel, mixParamSolution)
+solution$plot()
+
+
+
+
 ####
 # CEM Algorithm
 ####
-#solution <- CEM(mixModel, modelOptions)
-#mixParamSolution <- solution[[1]]
-#mixStatsSolution <- solution[[2]]
-#mixStatsSolution$showDataClusterSegmentation(mixModel, mixParamSolution)
+#solution <- CEM(modelMRHLP, n_tries, max_iter, threshold, verbose, verbose_IRLS)
+#solution$plot()
 
