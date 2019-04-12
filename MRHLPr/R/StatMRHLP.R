@@ -67,7 +67,9 @@ StatMRHLP <- setRefClass(
         weighted_polynomials[,,k] <<- (piik[,k] %*% ones(1,modelMRHLP$m)) * polynomials[,,k]
       }
 
-      Ex <<- matrix(rowSums(weighted_polynomials))
+      print(dim(weighted_polynomials))
+      #Ex <<- matrix(rowSums(weighted_polynomials))
+      Ex <<- apply(weighted_polynomials, c(1,2), sum)
 
       cpu_time <<- mean(cpu_time_all)
       # Psi <- c(as.vector(paramRHLP$Wk), as.vector(paramRHLP$betak), as.vector(paramRHLP$sigmak))
@@ -121,7 +123,7 @@ StatMRHLP <- function(modelMRHLP) {
   piik <- matrix(NA, modelMRHLP$n, modelMRHLP$K)
   z_ik <- matrix(NA, modelMRHLP$n, modelMRHLP$K)
   klas <- matrix(NA, modelMRHLP$n, 1)
-  Ex <- matrix(NA, modelMRHLP$n, 1)
+  Ex <- matrix(NA, modelMRHLP$n, modelMRHLP$K)
   log_lik <- -Inf
   com_loglik <- -Inf
   stored_loglik <- list()
