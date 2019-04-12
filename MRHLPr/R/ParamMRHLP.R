@@ -3,10 +3,10 @@ source("R/utils.R")
 source("R/IRLS.R")
 
 ParamMRHLP <- setRefClass(
-  "MParamRHLP",
+  "ParamMRHLP",
   fields = list(W = "matrix",
                 beta = "matrix",
-                sigma = "matrix"),
+                sigma = "array"),
   methods = list(
     initParam = function(modelMRHLP, phi, try_algo = 1) {
       "

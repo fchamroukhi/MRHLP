@@ -1,7 +1,7 @@
 source("R/model_logit.R")
 
-StatRHLP <- setRefClass(
-  "StatRHLP",
+StatMRHLP <- setRefClass(
+  "StatMRHLP",
   fields = list(
     piik = "matrix",
     z_ik = "matrix",
@@ -117,11 +117,11 @@ StatRHLP <- setRefClass(
 )
 
 
-StatRHLP <- function(modelRHLP) {
-  piik <- matrix(NA, modelRHLP$m, modelRHLP$K)
-  z_ik <- matrix(NA, modelRHLP$m, modelRHLP$K)
-  klas <- matrix(NA, modelRHLP$m, 1)
-  Ex <- matrix(NA, modelRHLP$m, 1)
+StatMRHLP <- function(modelMRHLP) {
+  piik <- matrix(NA, modelMRHLP$m, modelMRHLP$K)
+  z_ik <- matrix(NA, modelMRHLP$m, modelMRHLP$K)
+  klas <- matrix(NA, modelMRHLP$m, 1)
+  Ex <- matrix(NA, modelMRHLP$m, 1)
   log_lik <- -Inf
   com_loglik <- -Inf
   stored_loglik <- list()
@@ -130,14 +130,14 @@ StatRHLP <- function(modelRHLP) {
   ICL <- -Inf
   AIC <- -Inf
   cpu_time <- Inf
-  log_piik_fik <- matrix(0, modelRHLP$m, modelRHLP$K)
-  log_sum_piik_fik <- matrix(NA, modelRHLP$m, 1)
-  tik <- matrix(0, modelRHLP$m, modelRHLP$K)
-  polynomials <- matrix(NA, modelRHLP$m, modelRHLP$K)
-  weighted_polynomials <- matrix(NA, modelRHLP$m, modelRHLP$K)
+  log_piik_fik <- matrix(0, modelMRHLP$m, modelMRHLP$K)
+  log_sum_piik_fik <- matrix(NA, modelMRHLP$m, 1)
+  tik <- matrix(0, modelMRHLP$m, modelMRHLP$K)
+  polynomials <- matrix(NA, modelMRHLP$m, modelMRHLP$K)
+  weighted_polynomials <- matrix(NA, modelMRHLP$m, modelMRHLP$K)
 
   new(
-    "StatRHLP",
+    "StatMRHLP",
     piik = piik,
     z_ik = z_ik,
     klas = klas,

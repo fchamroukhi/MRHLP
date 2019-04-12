@@ -9,7 +9,7 @@ FittedMRHLP <- setRefClass(
     plot = function() {
       par(mfrow = c(2, 1))
       plot.default(modelRHLP$Y, type = "l", ylab = "y", xlab = "")
-      title(main = "Time series, RHLP regimes and process probabilities")
+      title(main = "Time series, MRHLP regimes and process probabilities")
       colors = rainbow(modelRHLP$K)
       for (k in 1:modelRHLP$K) {
         index <- (statRHLP$klas == k)
