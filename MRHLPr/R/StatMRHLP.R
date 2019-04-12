@@ -67,7 +67,6 @@ StatMRHLP <- setRefClass(
         weighted_polynomials[,,k] <<- (piik[,k] %*% ones(1,modelMRHLP$m)) * polynomials[,,k]
       }
 
-      print(dim(weighted_polynomials))
       #Ex <<- matrix(rowSums(weighted_polynomials))
       Ex <<- apply(weighted_polynomials, c(1,2), sum)
 
