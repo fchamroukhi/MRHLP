@@ -1,9 +1,9 @@
-FittedRHLP <- setRefClass(
-  "FittedRHLP",
+FittedMRHLP <- setRefClass(
+  "FittedMRHLP",
   fields = list(
-    modelRHLP = "ModelRHLP",
-    paramRHLP = "ParamRHLP",
-    statRHLP = "StatRHLP"
+    modelMRHLP = "ModelMRHLP",
+    paramMRHLP = "ParamMRHLP",
+    statMRHLP = "StatMRHLP"
   ),
   methods = list(
     plot = function() {
@@ -38,6 +38,6 @@ FittedRHLP <- setRefClass(
   )
 )
 
-FittedRHLP <- function(modelRHLP, paramRHLP, statRHLP) {
-  new("FittedRHLP", modelRHLP = modelRHLP, paramRHLP = paramRHLP, statRHLP = statRHLP)
+FittedMRHLP <- function(modelMRHLP, paramMRHLP, statMRHLP) {
+  new("FittedMRHLP", modelMRHLP = modelMRHLP, paramMRHLP = paramMRHLP, statMRHLP = statMRHLP)
 }
