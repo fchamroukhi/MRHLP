@@ -5,7 +5,7 @@ source("R/IRLS.R")
 ParamMRHLP <- setRefClass(
   "ParamMRHLP",
   fields = list(W = "matrix",
-                beta = "matrix",
+                beta = "array",
                 sigma = "array"),
   methods = list(
     initParam = function(modelMRHLP, phi, try_algo = 1) {
@@ -27,10 +27,8 @@ ParamMRHLP <- setRefClass(
 
           yk <- modelMRHLP$Y[i:j,]
           Xk <- phi$XBeta[i:j,]
-
           muk <- Xk %*% beta[,,k]
           sk <- t(yk - muk) %*% (yk - muk)
-
           if (modelMRHLP$variance_type == variance_types$homoskedastic){
             s <- s + sk
             sigma <<- s/n
@@ -39,6 +37,7 @@ ParamMRHLP <- setRefClass(
             sigma[, ,k] <<- sk / length(yk)
           }
         }
+
       }
       else{ # random segmentation into contiguous segments, and then a regression
         Lmin <- m+1 #round(m/K) #nbr pts min into one segment
@@ -135,12 +134,12 @@ ParamMRHLP <- setRefClass(
 
 ParamMRHLP <- function(modelMRHLP) {
   W <- matrix(0, modelMRHLP$p + 1, modelMRHLP$K - 1)
-  beta <- matrix(NA, modelMRHLP$p + 1, modelMRHLP$m, modelMRHLP$K)
+  beta <- array(NA, dim = c(modelMRHLP$p + 1, modelMRHLP$m, modelMRHLP$K))
   if (modelMRHLP$variance_type == variance_types$homoskedastic) {
     sigma <- matrix(NA, modelMRHLP$m, modelMRHLP$m)
   }
   else{
-    sigma <- array(NA, dim = c(modelMRHLP$m, modelMRHLP$m, modelMRHLP$m))
+    sigma <- array(NA, dim = c(modelMRHLP$m, modelMRHLP$m, modelMRHLP$K))
   }
   new("ParamMRHLP", W = W, beta = beta, sigma = sigma)
 }
