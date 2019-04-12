@@ -27,6 +27,9 @@ ParamMRHLP <- setRefClass(
 
           yk <- modelMRHLP$Y[i:j,]
           Xk <- phi$XBeta[i:j,]
+
+          beta[,,k] <<- solve(t(Xk)%*%Xk)%*%t(Xk)%*%yk
+
           muk <- Xk %*% beta[,,k]
           sk <- t(yk - muk) %*% (yk - muk)
           if (modelMRHLP$variance_type == variance_types$homoskedastic){
@@ -100,8 +103,8 @@ ParamMRHLP <- setRefClass(
         epps <- 1e-9
         M <- M + epps * diag(modelMRHLP$p + 1)
 
-        beta[, k] <<- solve(M) %*% t(Xk) %*% yk # Maximization w.r.t betak
-        z <- sqrt(weights) * (modelMRHLP$Y - phi$XBeta %*% beta[, k])
+        beta[,,k] <<- solve(M) %*% t(Xk) %*% yk # Maximization w.r.t betak
+        z <- sqrt(weights) * (modelMRHLP$Y - phi$XBeta %*% beta[,,k])
         # Maximisation w.r.t sigmak (the variances)
         priorsigma =  0
         #1e-5;
@@ -109,9 +112,9 @@ ParamMRHLP <- setRefClass(
           sk <- t(z) %*% z
           s <- s + sk
 
-          sigma <<- s / modelRHLP$m
+          sigma <<- s / modelMRHLP$m
         } else{
-          sigma[k] <<- t(z) %*% z / nk  + priorsigma
+          sigma[,,k] <<- t(z) %*% z / nk  + priorsigma
         }
       }
 
@@ -119,11 +122,11 @@ ParamMRHLP <- setRefClass(
       # ----------------------------------%
       #  IRLS : Iteratively Reweighted Least Squares (for IRLS, see the IJCNN 2009 paper)
       res_irls <-
-        IRLS(statRHLP$tik,
+        IRLS(statMRHLP$tik,
              phi$Xw,
              W,
              verbose_IRLS = verbose_IRLS,
-             piik_len = modelRHLP$m)
+             piik_len = modelMRHLP$m)
 
       W <<- res_irls$W
       piik <- res_irls$piik
@@ -133,7 +136,7 @@ ParamMRHLP <- setRefClass(
 )
 
 ParamMRHLP <- function(modelMRHLP) {
-  W <- matrix(0, modelMRHLP$p + 1, modelMRHLP$K - 1)
+  W <- matrix(0, modelMRHLP$q + 1, modelMRHLP$K - 1)
   beta <- array(NA, dim = c(modelMRHLP$p + 1, modelMRHLP$m, modelMRHLP$K))
   if (modelMRHLP$variance_type == variance_types$homoskedastic) {
     sigma <- matrix(NA, modelMRHLP$m, modelMRHLP$m)

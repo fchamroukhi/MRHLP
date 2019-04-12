@@ -18,8 +18,8 @@ StatMRHLP <- setRefClass(
     log_piik_fik = "matrix",
     log_sum_piik_fik = "matrix",
     tik = "matrix",
-    polynomials = "matrix",
-    weighted_polynomials = "matrix"
+    polynomials = "array",
+    weighted_polynomials = "array"
   ),
   methods = list(
     MAP = function() {
@@ -42,8 +42,7 @@ StatMRHLP <- setRefClass(
       K <- ncol(piik)
       ikmax <- max.col(piik)
       ikmax <- matrix(ikmax, ncol = 1)
-      z_ik <<-
-        ikmax %*% ones(1, K) == ones(N, 1) %*% (1:K) # partition_MAP
+      z_ik <<- ikmax %*% ones(1, K) == ones(N, 1) %*% (1:K) # partition_MAP
       klas <<- ones(N, 1)
       for (k in 1:K) {
         klas[z_ik[, k] == 1] <<- k
@@ -62,15 +61,18 @@ StatMRHLP <- setRefClass(
     #######
     # compute the final solution stats
     #######
-    computeStats = function(modelRHLP, paramRHLP, phi, cpu_time_all) {
-      polynomials <<- phi$XBeta %*% paramRHLP$beta
-      weighted_polynomials <<- piik * polynomials
+    computeStats = function(modelMRHLP, paramMRHLP, phi, cpu_time_all) {
+      for (k in 1:K){
+        polynomials[,,k] <<- phi$XBeta %*% paramMRHLP$beta[,,k]
+        weighted_polynomials[,,k] <<- (piik[,k] %*% ones(1,modelMRHLP$m)) * polynomials[,,k]
+      }
+
       Ex <<- matrix(rowSums(weighted_polynomials))
 
       cpu_time <<- mean(cpu_time_all)
       # Psi <- c(as.vector(paramRHLP$Wk), as.vector(paramRHLP$betak), as.vector(paramRHLP$sigmak))
-      BIC <<- log_lik - (modelRHLP$nu * log(modelRHLP$m) / 2)
-      AIC <<- log_lik - modelRHLP$nu
+      BIC <<- log_lik - (modelMRHLP$nu * log(modelMRHLP$m) / 2)
+      AIC <<- log_lik - modelMRHLP$nu
 
 
       zik_log_alphag_fg_xij <- (z_ik) * (log_piik_fik)
@@ -78,50 +80,48 @@ StatMRHLP <- setRefClass(
       com_loglik <<- sum(rowSums(zik_log_alphag_fg_xij))
 
 
-      ICL <<- com_loglik - modelRHLP$nu * log(modelRHLP$m) / 2
-
-
+      ICL <<- com_loglik - modelMRHLP$nu * log(modelMRHLP$m) / 2
     },
     #######
     # EStep
     #######
     EStep = function(modelMRHLP, paramMRHLP, phi) {
-      piik <<- modele_logit(paramMRHLP$Wg, phi$Xw)
-
-      log_piik_fik <<- zeros(modelMRHLP$m, modelMRHLP$K)
+      piik <<- modele_logit(paramMRHLP$W, phi$Xw)$probas
+      log_piik_fik <<- zeros(modelMRHLP$n, modelMRHLP$K)
 
       for (k in 1:modelMRHLP$K){
-        muk <- phi$XBeta %*% paramMRHLP$betag[,,k]
-        if (variance_type == variance_types.homoskedastic){
-          sigmak <- paramMRHLP$sigmag
+        muk <- phi$XBeta %*% paramMRHLP$beta[,,k]
+        if (variance_type == variance_types$homoskedastic){
+          sigmak <- paramMRHLP$sigma
         }else{
-          sigmak <- paramMRHLP$sigmag[,,k]
+          sigmak <- paramMRHLP$sigma[,,k]
         }
 
         z <- ((modelMRHLP$Y - muk) %*% solve(sigmak)) * (modelMRHLP$Y - muk)
 
         mahalanobis <- rowSums(z)
 
-        denom <- (2*pi)^(mixModel$d/2) * (det(sigmak)) ^ 0.5
+        denom <- (2*pi)^(modelMRHLP$m/2) * (det(sigmak)) ^ 0.5
 
-        log_piik_fik[,k] <<- log(piik[,k]) - ones(modelMRHLP$m, 1) %*% log(denom) - 0.5* mahalanobis
+        log_piik_fik[,k] <<- log(piik[,k]) - ones(modelMRHLP$n, 1) %*% log(denom) - 0.5* mahalanobis
       }
-
       log_piik_fik <<- pmax(log_piik_fik, log(.Machine$double.xmin))
       piik_fik <- exp(log_piik_fik)
-      log_sum_piik_fik <<- log(rowSum(piik_fik))
+
+      log_sum_piik_fik <<- matrix(log(rowSums(piik_fik)))
+
       log_tauik <- log_piik_fik - log_sum_piik_fik %*% ones(1,modelMRHLP$K)
-      tik <<- normalize(exp(log_tauik),2)
+      tik <<- normalize(exp(log_tauik),2)$M
     }
   )
 )
 
 
 StatMRHLP <- function(modelMRHLP) {
-  piik <- matrix(NA, modelMRHLP$m, modelMRHLP$K)
-  z_ik <- matrix(NA, modelMRHLP$m, modelMRHLP$K)
-  klas <- matrix(NA, modelMRHLP$m, 1)
-  Ex <- matrix(NA, modelMRHLP$m, 1)
+  piik <- matrix(NA, modelMRHLP$n, modelMRHLP$K)
+  z_ik <- matrix(NA, modelMRHLP$n, modelMRHLP$K)
+  klas <- matrix(NA, modelMRHLP$n, 1)
+  Ex <- matrix(NA, modelMRHLP$n, 1)
   log_lik <- -Inf
   com_loglik <- -Inf
   stored_loglik <- list()
@@ -130,11 +130,11 @@ StatMRHLP <- function(modelMRHLP) {
   ICL <- -Inf
   AIC <- -Inf
   cpu_time <- Inf
-  log_piik_fik <- matrix(0, modelMRHLP$m, modelMRHLP$K)
-  log_sum_piik_fik <- matrix(NA, modelMRHLP$m, 1)
-  tik <- matrix(0, modelMRHLP$m, modelMRHLP$K)
-  polynomials <- matrix(NA, modelMRHLP$m, modelMRHLP$K)
-  weighted_polynomials <- matrix(NA, modelMRHLP$m, modelMRHLP$K)
+  log_piik_fik <- matrix(0, modelMRHLP$n, modelMRHLP$K)
+  log_sum_piik_fik <- matrix(NA, modelMRHLP$n, 1)
+  tik <- matrix(0, modelMRHLP$n, modelMRHLP$K)
+  polynomials <- array(NA, dim = c(modelMRHLP$n, modelMRHLP$p, modelMRHLP$K))
+  weighted_polynomials <- array(NA, dim = c(modelMRHLP$n, modelMRHLP$p, modelMRHLP$K))
 
   new(
     "StatMRHLP",
