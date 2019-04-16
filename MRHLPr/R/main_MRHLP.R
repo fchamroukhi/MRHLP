@@ -61,7 +61,7 @@ p <- 3 # dimension of beta (order of the polynomial regressors)
 q <- 1 # dimension of w (order of the logistic regression: to be set to 1 for segmentation)
 variance_type <- variance_types$hetereskedastic
 
-modelMRHLP <- ModelMRHLP(fData, K, p, q)
+modelMRHLP <- ModelMRHLP(fData, K, p, q, variance_type)
 
 # setting the model options
 n_tries <- 1
