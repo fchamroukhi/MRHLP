@@ -96,7 +96,7 @@ ParamMRHLP <- setRefClass(
 
         Xk <- phi$XBeta * (sqrt(weights) %*% ones(1, modelMRHLP$p + 1))
         #[m*(p+1)]
-        yk <- modelMRHLP$Y * (sqrt(weights))
+        yk <- modelMRHLP$Y * (sqrt(weights) %*% ones(1, modelMRHLP$m))
         # dimension :(nx1).*(nx1) = (nx1)
 
         M <- t(Xk) %*% Xk
@@ -104,17 +104,16 @@ ParamMRHLP <- setRefClass(
         M <- M + epps * diag(modelMRHLP$p + 1)
 
         beta[,,k] <<- solve(M) %*% t(Xk) %*% yk # Maximization w.r.t betak
-        z <- sqrt(weights) * (modelMRHLP$Y - phi$XBeta %*% beta[,,k])
+        z <- (modelMRHLP$Y - phi$XBeta %*% beta[,,k]) * (sqrt(weights) %*% ones(1, modelMRHLP$m))
         # Maximisation w.r.t sigmak (the variances)
-        priorsigma =  0
-        #1e-5;
+
+        sk <- t(z) %*% z
         if (modelMRHLP$variance_type == variance_types$homoskedastic) {
-          sk <- t(z) %*% z
           s <- s + sk
 
-          sigma <<- s / modelMRHLP$m
+          sigma <<- s / modelMRHLP$n
         } else{
-          sigma[,,k] <<- t(z) %*% z / nk  + priorsigma
+          sigma[,,k] <<- sk / nk
         }
       }
 
@@ -125,8 +124,8 @@ ParamMRHLP <- setRefClass(
         IRLS(statMRHLP$tik,
              phi$Xw,
              W,
-             verbose_IRLS = verbose_IRLS,
-             piik_len = modelMRHLP$m)
+             verbose_IRLS = verbose_IRLS
+             )
 
       W <<- res_irls$W
       piik <- res_irls$piik

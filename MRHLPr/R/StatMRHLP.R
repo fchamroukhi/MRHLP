@@ -55,9 +55,7 @@ StatMRHLP <- setRefClass(
       log_lik <<- sum(log_sum_piik_fik) + reg_irls
 
     },
-    #######
-    #
-    #######
+
     #######
     # compute the final solution stats
     #######
@@ -88,7 +86,7 @@ StatMRHLP <- setRefClass(
     #######
     EStep = function(modelMRHLP, paramMRHLP, phi) {
       piik <<- modele_logit(paramMRHLP$W, phi$Xw)$probas
-      log_piik_fik <<- zeros(modelMRHLP$n, modelMRHLP$K)
+      #log_piik_fik <<- zeros(modelMRHLP$n, modelMRHLP$K)
 
       for (k in 1:modelMRHLP$K){
         muk <- phi$XBeta %*% paramMRHLP$beta[,,k]
@@ -96,19 +94,20 @@ StatMRHLP <- setRefClass(
           sigmak <- paramMRHLP$sigma
         }else{
           sigmak <- paramMRHLP$sigma[,,k]
+
         }
 
         z <- ((modelMRHLP$Y - muk) %*% solve(sigmak)) * (modelMRHLP$Y - muk)
 
-        mahalanobis <- rowSums(z)
+        mahalanobis <- matrix(rowSums(z))
 
         denom <- (2*pi)^(modelMRHLP$m/2) * (det(sigmak)) ^ 0.5
 
-        log_piik_fik[,k] <<- log(piik[,k]) - ones(modelMRHLP$n, 1) %*% log(denom) - 0.5* mahalanobis
+        log_piik_fik[,k] <<- log(piik[,k]) - ones(modelMRHLP$n, 1) %*% log(denom) - 0.5 * mahalanobis
       }
+
       log_piik_fik <<- pmax(log_piik_fik, log(.Machine$double.xmin))
       piik_fik <- exp(log_piik_fik)
-
       log_sum_piik_fik <<- matrix(log(rowSums(piik_fik)))
 
       log_tauik <- log_piik_fik - log_sum_piik_fik %*% ones(1,modelMRHLP$K)
