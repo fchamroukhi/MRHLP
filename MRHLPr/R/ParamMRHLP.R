@@ -16,67 +16,71 @@ ParamMRHLP <- setRefClass(
       n <- nrow(phi$XBeta) # m
       m <- ncol(phi$XBeta) # P
 
-      if (try_algo==1){ #  uniform segmentation into K contiguous segments, and then a regression
-        zi <- round(n/modelMRHLP$K)-1
+      if (try_algo == 1) {
+        #  uniform segmentation into K contiguous segments, and then a regression
+        zi <- round(n / modelMRHLP$K) - 1
 
         s <- 0
 
-        for (k in 1:modelMRHLP$K){
-          i <- (k-1)*zi+1
-          j <- k*zi
+        for (k in 1:modelMRHLP$K) {
+          i <- (k - 1) * zi + 1
+          j <- k * zi
 
-          yk <- modelMRHLP$Y[i:j,]
-          Xk <- phi$XBeta[i:j,]
+          yk <- modelMRHLP$Y[i:j, ]
+          Xk <- phi$XBeta[i:j, ]
 
-          beta[,,k] <<- solve(t(Xk)%*%Xk)%*%t(Xk)%*%yk
+          beta[, , k] <<- solve(t(Xk) %*% Xk) %*% t(Xk) %*% yk
 
-          muk <- Xk %*% beta[,,k]
+          muk <- Xk %*% beta[, , k]
           sk <- t(yk - muk) %*% (yk - muk)
-          if (modelMRHLP$variance_type == variance_types$homoskedastic){
+          if (modelMRHLP$variance_type == variance_types$homoskedastic) {
             s <- s + sk
-            sigma <<- s/n
+            sigma <<- s / n
           }
           else{
-            sigma[, ,k] <<- sk / length(yk)
+            sigma[, , k] <<- sk / length(yk)
           }
         }
 
       }
-      else{ # random segmentation into contiguous segments, and then a regression
-        Lmin <- m+1 #round(m/K) #nbr pts min into one segment
-        tk_init <- zeros(modelMRHLP$K,1)
+      else{
+        # random segmentation into contiguous segments, and then a regression
+        Lmin <- m + 1 #round(m/K) #nbr pts min into one segment
+        tk_init <- zeros(modelMRHLP$K, 1)
         K_1 <- modelMRHLP$K
         for (k in 2:modelMRHLP$K) {
-          K_1 <- K_1-1;
+          K_1 <- K_1 - 1
+
           #temp <- (tk_init[k-1] + Lmin) : (m - (K_1*Lmin))
 
-          temp <- tk_init[k-1] + Lmin : (n - (K_1*Lmin) - tk_init[k-1])
+          temp <- tk_init[k - 1] + Lmin:(n - (K_1 * Lmin) - tk_init[k - 1])
 
-          ind <- sample(length(temp));
+          ind <- sample(length(temp))
+
           tk_init[k] <- temp[ind[1]]
         }
-        tk_init[K+1] <- n
+        tk_init[K + 1] <- n
 
         s <- 0
-        for (k in 1:modelMRHLP$K){
+        for (k in 1:modelMRHLP$K) {
           i <- tk_init[k] + 1
-          j <- tk_init[k+1]
+          j <- tk_init[k + 1]
 
-          yk <- modelMRHLP$Y[i:j,]
-          Xk <- phi$XBeta[i:j,]
+          yk <- modelMRHLP$Y[i:j, ]
+          Xk <- phi$XBeta[i:j, ]
 
 
-          beta[,,k] <<- solve(t(Xk)%*%Xk)%*%t(Xk)%*%yk
+          beta[, , k] <<- solve(t(Xk) %*% Xk) %*% t(Xk) %*% yk
 
-          muk <- Xk %*% beta[,,k]
+          muk <- Xk %*% beta[, , k]
           sk <- t(yk - muk) %*% (yk - muk)
 
-          if (modelMRHLP$variance_type == variance_types$homoskedastic){
+          if (modelMRHLP$variance_type == variance_types$homoskedastic) {
             s <- s + sk
-            sigma <<- s/n
+            sigma <<- s / n
           }
           else{
-            sigma[, ,k] <<- sk / length(yk)
+            sigma[, , k] <<- sk / length(yk)
           }
         }
       }
@@ -103,8 +107,8 @@ ParamMRHLP <- setRefClass(
         epps <- 1e-9
         M <- M + epps * diag(modelMRHLP$p + 1)
 
-        beta[,,k] <<- solve(M) %*% t(Xk) %*% yk # Maximization w.r.t betak
-        z <- (modelMRHLP$Y - phi$XBeta %*% beta[,,k]) * (sqrt(weights) %*% ones(1, modelMRHLP$m))
+        beta[, , k] <<- solve(M) %*% t(Xk) %*% yk # Maximization w.r.t betak
+        z <- (modelMRHLP$Y - phi$XBeta %*% beta[, , k]) * (sqrt(weights) %*% ones(1, modelMRHLP$m))
         # Maximisation w.r.t sigmak (the variances)
 
         sk <- t(z) %*% z
@@ -113,19 +117,14 @@ ParamMRHLP <- setRefClass(
 
           sigma <<- s / modelMRHLP$n
         } else{
-          sigma[,,k] <<- sk / nk
+          sigma[, , k] <<- sk / nk
         }
       }
 
       # Maximization w.r.t W
       # ----------------------------------%
       #  IRLS : Iteratively Reweighted Least Squares (for IRLS, see the IJCNN 2009 paper)
-      res_irls <-
-        IRLS(statMRHLP$tik,
-             phi$Xw,
-             W,
-             verbose_IRLS = verbose_IRLS
-             )
+      res_irls <- IRLS(statMRHLP$tik, phi$Xw, W, verbose_IRLS = verbose_IRLS)
 
       W <<- res_irls$W
       piik <- res_irls$piik
@@ -143,5 +142,8 @@ ParamMRHLP <- function(modelMRHLP) {
   else{
     sigma <- array(NA, dim = c(modelMRHLP$m, modelMRHLP$m, modelMRHLP$K))
   }
-  new("ParamMRHLP", W = W, beta = beta, sigma = sigma)
+  new("ParamMRHLP",
+      W = W,
+      beta = beta,
+      sigma = sigma)
 }

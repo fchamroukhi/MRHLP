@@ -60,7 +60,7 @@ StatMRHLP <- setRefClass(
     # compute the final solution stats
     #######
     computeStats = function(modelMRHLP, paramMRHLP, phi, cpu_time_all) {
-      for (k in 1:K){
+      for (k in 1:K) {
         polynomials[,,k] <<- phi$XBeta %*% paramMRHLP$beta[,,k]
         weighted_polynomials[,,k] <<- (piik[,k] %*% ones(1,modelMRHLP$m)) * polynomials[,,k]
       }
@@ -88,9 +88,9 @@ StatMRHLP <- setRefClass(
       piik <<- modele_logit(paramMRHLP$W, phi$Xw)$probas
       #log_piik_fik <<- zeros(modelMRHLP$n, modelMRHLP$K)
 
-      for (k in 1:modelMRHLP$K){
+      for (k in 1:modelMRHLP$K) {
         muk <- phi$XBeta %*% paramMRHLP$beta[,,k]
-        if (variance_type == variance_types$homoskedastic){
+        if (variance_type == variance_types$homoskedastic) {
           sigmak <- paramMRHLP$sigma
         }else{
           sigmak <- paramMRHLP$sigma[,,k]
