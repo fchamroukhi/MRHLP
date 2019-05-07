@@ -1,6 +1,7 @@
+.DS_Store
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
-
-MRHLPr/\.Rbuildignore
+MRHLPr/.Rbuildignore
+MRHLP/.DS_Store
