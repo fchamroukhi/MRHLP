@@ -1,7 +1,3 @@
-source("R/enums.R")
-source("R/utils.R")
-source("R/IRLS.R")
-
 ParamMRHLP <- setRefClass(
   "ParamMRHLP",
   fields = list(W = "matrix",
@@ -124,7 +120,7 @@ ParamMRHLP <- setRefClass(
       # Maximization w.r.t W
       # ----------------------------------%
       #  IRLS : Iteratively Reweighted Least Squares (for IRLS, see the IJCNN 2009 paper)
-      res_irls <- IRLS(statMRHLP$tik, phi$Xw, W, verbose_IRLS = verbose_IRLS)
+      res_irls <- IRLS(phi$Xw, statMRHLP$tik, ones(nrow(statMRHLP$tik), 1), W, verbose_IRLS)
 
       W <<- res_irls$W
       piik <- res_irls$piik

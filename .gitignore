@@ -3,5 +3,4 @@
 .Rhistory
 .RData
 .Ruserdata
-MRHLPr/.Rbuildignore
-MRHLP/.DS_Store
+inst/doc

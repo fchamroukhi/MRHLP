@@ -1,5 +1,3 @@
-source("R/model_logit.R")
-
 StatMRHLP <- setRefClass(
   "StatMRHLP",
   fields = list(
@@ -24,7 +22,7 @@ StatMRHLP <- setRefClass(
   methods = list(
     MAP = function() {
       "
-      calcule une partition d'un echantillon par la regle du Maximum A Posteriori à partir des probabilites a posteriori
+      calcule une partition d'un echantillon par la regle du Maximum A Posteriori a partir des probabilites a posteriori
       Entrees : post_probas , Matrice de dimensions [n x K] des probabibiltes a posteriori (matrice de la partition floue)
       n : taille de l'echantillon
       K : nombres de classes
@@ -36,7 +34,7 @@ StatMRHLP <- setRefClass(
       1<=k<=K
       Sorties : classes : vecteur collones contenant les classe (1:K)
       Z : Matrice de dimension [nxK] de la partition dure : ses elements sont zik, avec zik=1 si xi
-      appartient à la classe k (au sens du MAP) et zero sinon.
+      appartient la classe k (au sens du MAP) et zero sinon.
       "
       N <- nrow(piik)
       K <- ncol(piik)
@@ -85,7 +83,7 @@ StatMRHLP <- setRefClass(
     # EStep
     #######
     EStep = function(modelMRHLP, paramMRHLP, phi) {
-      piik <<- modele_logit(paramMRHLP$W, phi$Xw)$probas
+      piik <<- multinomialLogit(paramMRHLP$W, phi$Xw, ones(modelMRHLP$n, modelMRHLP$K), ones(modelMRHLP$n, 1))$piik
       #log_piik_fik <<- zeros(modelMRHLP$n, modelMRHLP$K)
 
       for (k in 1:modelMRHLP$K) {
