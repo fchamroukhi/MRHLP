@@ -34,15 +34,16 @@ library(MRHLP)
 **MRHLP** is a contributed R package for segmentation. It provides functions for parameter estimation via the EM algorithm. This document gives a quick tour of **MRHLP** (version `r packageVersion("MRHLP")`) functionalities. It was written in R Markdown, using the [knitr](https://cran.r-project.org/package=knitr) package for production. 
 See `help(package="MRHLP")` for further details and references provided by `citation("MRHLP")`.
 
-# Load data
+# Load simulated data
 
 ```{r}
+rm(list = ls())
 data("simulatedtimeseries")
 fData <- FData$new()
 fData$setData(t(simulatedtimeseries$X), as.matrix(simulatedtimeseries[, 2:ncol(simulatedtimeseries)]))
 ```
 
-# Set up RHLP model parameters
+## Set up MRHLP model parameters
 
 ```{r}
 K <- 5 # number of regimes (mixture components)
@@ -53,7 +54,7 @@ variance_type <- variance_types$hetereskedastic
 modelMRHLP <- ModelMRHLP(fData, K, p, q, variance_type)
 ```
 
-# Set up EM parameters
+## Set up EM parameters
 
 ```{r}
 n_tries <- 1
@@ -64,14 +65,63 @@ verbose_IRLS <- FALSE
 ```
 
 
-# Estimation
+## Estimation
 
 ```{r}
 solution <- EM(modelMRHLP, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 ```
 
 
-# Plots
+## Simulated data results plots
+
+```{r}
+solution$plot()
+```
+
+
+
+
+# Load simulated data
+
+```{r}
+rm(list = ls())
+data("humanaccelerations")
+fData <- FData$new()
+fData$setData(t(humanaccelerations$X), as.matrix(humanaccelerations[, 2:ncol(humanaccelerations)]))
+```
+
+## Set up MRHLP model parameters
+We used the same MRHLP model parameters as for the simulated time series
+
+```{r include=FALSE}
+K <- 5 # number of regimes (mixture components)
+p <- 3 # dimension of beta (order of the polynomial regressors)
+q <- 1 # dimension of w (order of the logistic regression: to be set to 1 for segmentation)
+variance_type <- variance_types$hetereskedastic
+
+modelMRHLP <- ModelMRHLP(fData, K, p, q, variance_type)
+```
+
+## Set up EM parameters
+We used the same EM parameters as for the simulated time series
+
+```{r include=FALSE}
+n_tries <- 1
+max_iter = 1500
+threshold <- 1e-6
+verbose <- TRUE
+verbose_IRLS <- FALSE
+```
+
+
+## Estimation
+
+```{r}
+solution <- EM(modelMRHLP, n_tries, max_iter, threshold, verbose, verbose_IRLS)
+```
+
+
+## Plots
 
 ```{r}
 solution$plot()
