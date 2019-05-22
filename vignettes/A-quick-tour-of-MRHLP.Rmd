@@ -40,7 +40,7 @@ See `help(package="MRHLP")` for further details and references provided by `cita
 rm(list = ls())
 data("simulatedtimeseries")
 fData <- FData$new()
-fData$setData(t(simulatedtimeseries$X), as.matrix(simulatedtimeseries[, 2:ncol(simulatedtimeseries)]))
+fData$setData(simulatedtimeseries$X, as.matrix(simulatedtimeseries[, 2:ncol(simulatedtimeseries)]))
 ```
 
 ## Set up MRHLP model parameters
@@ -87,7 +87,7 @@ solution$plot()
 rm(list = ls())
 data("humanaccelerations")
 fData <- FData$new()
-fData$setData(t(humanaccelerations$X), as.matrix(humanaccelerations[, 2:ncol(humanaccelerations)]))
+fData$setData(humanaccelerations$X, as.matrix(humanaccelerations[, 2:ncol(humanaccelerations)]))
 ```
 
 ## Set up MRHLP model parameters

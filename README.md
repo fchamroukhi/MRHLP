@@ -1,23 +1,28 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-Overview
---------
+
+## Overview
 
 <!-- badges: start -->
+
 <!-- badges: end -->
-User-friendly and flexible algorithm for time series **segmentation** of multivariate time series with a Multiple Regression model with a Hidden Logistic Process (MRHLP).
 
-Installation
-------------
+User-friendly and flexible algorithm for time series **segmentation** of
+multivariate time series with a Multiple Regression model with a Hidden
+Logistic Process (MRHLP).
 
-You can install the development version of MRHLP from [GitHub](https://github.com/) with:
+## Installation
+
+You can install the development version of MRHLP from
+[GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("fchamroukhi/MRHLP")
 ```
 
-To build *vignettes* for examples of usage, type the command below instead:
+To build *vignettes* for examples of usage, type the command below
+instead:
 
 ``` r
 # install.packages("devtools")
@@ -32,15 +37,14 @@ Use the following command to display vignettes:
 browseVignettes("MRHLP")
 ```
 
-Usage
------
+## Usage
 
 ``` r
 library(MRHLP)
 
 data("simulatedtimeseries")
 fData <- FData$new()
-fData$setData(t(simulatedtimeseries$X), as.matrix(simulatedtimeseries[, 2:ncol(simulatedtimeseries)]))
+fData$setData(simulatedtimeseries$X, as.matrix(simulatedtimeseries[, 2:ncol(simulatedtimeseries)]))
 
 K <- 5 # number of regimes (mixture components)
 p <- 3 # dimension of beta (order of the polynomial regressors)
