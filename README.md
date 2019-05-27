@@ -43,8 +43,7 @@ browseVignettes("MRHLP")
 library(MRHLP)
 
 data("simulatedtimeseries")
-fData <- FData$new()
-fData$setData(simulatedtimeseries$X, as.matrix(simulatedtimeseries[, 2:ncol(simulatedtimeseries)]))
+fData <- FData(simulatedtimeseries$X, as.matrix(simulatedtimeseries[, 2:ncol(simulatedtimeseries)]))
 
 K <- 5 # number of regimes (mixture components)
 p <- 3 # dimension of beta (order of the polynomial regressors)
