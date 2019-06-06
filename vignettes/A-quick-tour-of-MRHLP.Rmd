@@ -47,7 +47,7 @@ data("simulatedtimeseries")
 K <- 5 # number of regimes (mixture components)
 p <- 3 # dimension of beta (order of the polynomial regressors)
 q <- 1 # dimension of w (order of the logistic regression: to be set to 1 for segmentation)
-variance_type <- variance_types$hetereskedastic
+variance_type <- variance_types$heteroskedastic
 ```
 
 ## Set up EM parameters
@@ -64,7 +64,7 @@ verbose_IRLS <- FALSE
 ## Estimation
 
 ```{r}
-solution <- emMRHLP(simulatedtimeseries$X, t(simulatedtimeseries$Y1),  K, p, q, 
+solution <- emMRHLP(simulatedtimeseries$X, as.matrix(simulatedtimeseries[,2:4]),  K, p, q, 
                    variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 ```
 
@@ -92,7 +92,7 @@ We used the same MRHLP model parameters as for the simulated time series
 K <- 5 # number of regimes (mixture components)
 p <- 3 # dimension of beta (order of the polynomial regressors)
 q <- 1 # dimension of w (order of the logistic regression: to be set to 1 for segmentation)
-variance_type <- variance_types$hetereskedastic
+variance_type <- variance_types$heteroskedastic
 ```
 
 ## Set up EM parameters
@@ -110,7 +110,7 @@ verbose_IRLS <- FALSE
 ## Estimation
 
 ```{r}
-solution <- emMRHLP(humanaccelerations$X, t(humanaccelerations$Y),  K, p, q, 
+solution <- emMRHLP(humanaccelerations$X, as.matrix(humanaccelerations[,2:4]),  K, p, q, 
                    variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 ```
 

@@ -1,3 +1,4 @@
+#' @export
 emMRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbose = FALSE, verbose_IRLS = FALSE) {
     fData <- FData(X, Y)
 
@@ -18,7 +19,7 @@ emMRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter 
       converge <- FALSE
       prev_loglik <- -Inf
 
-      stat <- StatMRHLP(modelMRHLP)
+      stat <- StatMRHLP(param)
 
       while (!converge && (iter <= max_iter)) {
         stat$EStep(param)
@@ -60,14 +61,14 @@ emMRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter 
       if (stat$log_lik > best_loglik) {
         statSolution <- stat$copy()
         paramSolution <- param$copy()
-        if (modelMRHLP$K == 1) {
-          statSolution$tik <- matrix(stat$tik, nrow = modelMRHLP$n, ncol = 1)
+        if (param$K == 1) {
+          statSolution$tik <- matrix(stat$tik, nrow = param$fData$n, ncol = 1)
           statSolution$piik <-
-            matrix(stat$piik, nrow = modelMRHLP$n, ncol = 1)
+            matrix(stat$piik, nrow = param$fData$n, ncol = 1)
         }
         else{
-          statSolution$tik <- stat$tik[1:modelMRHLP$n, ]
-          statSolution$piik <- stat$piik[1:modelMRHLP$n, ]
+          statSolution$tik <- stat$tik[1:param$fData$n, ]
+          statSolution$piik <- stat$piik[1:param$fData$n, ]
         }
 
         best_loglik <- stat$log_lik
@@ -88,5 +89,5 @@ emMRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter 
     # FINISH computation of statSolution
     statSolution$computeStats(paramSolution, cpu_time_all)
 
-    return(ModelMRHLP$new(paramSolution, statSolution))
+    return(ModelMRHLP$new(paramMRHLP = paramSolution, statMRHLP = statSolution))
   }

@@ -1,3 +1,4 @@
+#' @export
 ModelMRHLP <- setRefClass(
   "ModelMRHLP",
   fields = list(

@@ -1,3 +1,4 @@
+#' @export
 ParamMRHLP <- setRefClass(
   "ParamMRHLP",
   fields = list(
@@ -58,7 +59,7 @@ ParamMRHLP <- setRefClass(
       m <- ncol(phi$XBeta) # P
 
       if (try_algo == 1) {
-        #  uniform segmentation into K contiguous segments, and then a regression
+        # uniform segmentation into K contiguous segments, and then a regression
         zi <- round(n / K) - 1
 
         s <- 0

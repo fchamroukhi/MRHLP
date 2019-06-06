@@ -1,3 +1,4 @@
+#' @export
 StatMRHLP <- setRefClass(
   "StatMRHLP",
   fields = list(
@@ -32,7 +33,7 @@ StatMRHLP <- setRefClass(
       BIC <<- -Inf
       ICL <<- -Inf
       AIC <<- -Inf
-      cpu_time <- Inf
+      cpu_time <<- Inf
       log_piik_fik <<- matrix(0, paramMRHLP$fData$n, paramMRHLP$K)
       log_sum_piik_fik <<- matrix(NA, paramMRHLP$fData$n, 1)
       tik <<- matrix(0, paramMRHLP$fData$n, paramMRHLP$K)
@@ -79,7 +80,7 @@ StatMRHLP <- setRefClass(
     #######
     computeStats = function(paramMRHLP, cpu_time_all) {
       for (k in 1:K) {
-        polynomials[,,k] <<- phi$XBeta %*% paramMRHLP$beta[,,k]
+        polynomials[,,k] <<- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[,,k]
         weighted_polynomials[,,k] <<- (piik[,k] %*% ones(1, paramMRHLP$fData$m)) * polynomials[,,k]
       }
 
@@ -107,7 +108,7 @@ StatMRHLP <- setRefClass(
       #log_piik_fik <<- zeros(modelMRHLP$n, modelMRHLP$K)
 
       for (k in 1:paramMRHLP$K) {
-        muk <- phi$XBeta %*% paramMRHLP$beta[,,k]
+        muk <- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[,,k]
         if (variance_type == variance_types$homoskedastic) {
           sigmak <- paramMRHLP$sigma
         }else{
