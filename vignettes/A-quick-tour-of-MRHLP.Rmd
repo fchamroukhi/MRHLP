@@ -39,7 +39,6 @@ See `help(package="MRHLP")` for further details and references provided by `cita
 ```{r}
 rm(list = ls())
 data("simulatedtimeseries")
-fData <- FData(simulatedtimeseries$X, as.matrix(simulatedtimeseries[, 2:ncol(simulatedtimeseries)]))
 ```
 
 ## Set up MRHLP model parameters
@@ -48,9 +47,7 @@ fData <- FData(simulatedtimeseries$X, as.matrix(simulatedtimeseries[, 2:ncol(sim
 K <- 5 # number of regimes (mixture components)
 p <- 3 # dimension of beta (order of the polynomial regressors)
 q <- 1 # dimension of w (order of the logistic regression: to be set to 1 for segmentation)
-variance_type <- variance_types$heteroskedastic
-
-modelMRHLP <- ModelMRHLP(fData, K, p, q, variance_type)
+variance_type <- variance_types$hetereskedastic
 ```
 
 ## Set up EM parameters
@@ -67,7 +64,8 @@ verbose_IRLS <- FALSE
 ## Estimation
 
 ```{r}
-solution <- EM(modelMRHLP, n_tries, max_iter, threshold, verbose, verbose_IRLS)
+solution <- emMRHLP(simulatedtimeseries$X, t(simulatedtimeseries$Y1),  K, p, q, 
+                   variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 ```
 
 
@@ -85,7 +83,6 @@ solution$plot()
 ```{r}
 rm(list = ls())
 data("humanaccelerations")
-fData <- FData(humanaccelerations$X, as.matrix(humanaccelerations[, 2:ncol(humanaccelerations)]))
 ```
 
 ## Set up MRHLP model parameters
@@ -95,9 +92,7 @@ We used the same MRHLP model parameters as for the simulated time series
 K <- 5 # number of regimes (mixture components)
 p <- 3 # dimension of beta (order of the polynomial regressors)
 q <- 1 # dimension of w (order of the logistic regression: to be set to 1 for segmentation)
-variance_type <- variance_types$heteroskedastic
-
-modelMRHLP <- ModelMRHLP(fData, K, p, q, variance_type)
+variance_type <- variance_types$hetereskedastic
 ```
 
 ## Set up EM parameters
@@ -115,7 +110,8 @@ verbose_IRLS <- FALSE
 ## Estimation
 
 ```{r}
-solution <- EM(modelMRHLP, n_tries, max_iter, threshold, verbose, verbose_IRLS)
+solution <- emMRHLP(humanaccelerations$X, t(humanaccelerations$Y),  K, p, q, 
+                   variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 ```
 
 

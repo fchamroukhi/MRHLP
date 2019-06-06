@@ -14,10 +14,9 @@ Collate:
     enums.R
     utils.R
     FData.R
-    ModelMRHLP.R
     ParamMRHLP.R
     StatMRHLP.R
-    FittedMRHLP.R
+    ModelMRHLP.R
     ModelLearner.R
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1
