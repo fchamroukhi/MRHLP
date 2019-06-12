@@ -2,6 +2,21 @@ citHeader("To cite MRHLP in publications use:")
 
 citEntry(
   entry = "Article",
+  title = "Model-Based Clustering and Classification of Functional Data",
+  author = personList(person(given="F.", family="Chamroukhi"),
+                      person(given="Hien D.", family="Nguyen")),
+  journal = "Wiley Interdisciplinary Reviews: Data Mining and Knowledge Discovery",
+  year = "2019",
+  url = "https://chamroukhi.com/papers/MBCC-FDA.pdf",
+  doi = "https://doi.org/10.1002/widm.1298",
+  textVersion = "Chamroukhi F, Nguyen H (2019). \u201cModel-Based Clustering and
+  Classification of Functional Data.\u201d Wiley Interdisciplinary Reviews: Data Mining and
+  Knowledge Discovery. doi: 10.1002/widm.1298 (URL: https://doi.org/10.1002/widm.1298),
+  <URL:https://chamroukhi.com/papers/MBCC-FDA.pdf>."
+)
+
+citEntry(
+  entry = "Article",
   title = "Joint segmentation of multivariate time series with hidden process regression for human activity recognition",
   author = personList(person(given="F.", family="Chamroukhi"),
                       person(given="D.", family="Trabelsi"),
@@ -16,23 +31,8 @@ citEntry(
   url = "https://chamroukhi.com/papers/chamroukhi_et_al_neucomp2013b.pdf",
   textVersion = "Chamroukhi F, Trabelsi D, Mohammed S, Oukhellou L and Amirat Y (2013).
   \u201cJoint segmentation of multivariate time series with hidden process regression
-  for human activity recognition.\u201d _Neurocomputing_, *120*, pp. 633-644.
+  for human activity recognition.\u201d Neurocomputing, 120, pp. 633-644.
   <URL:https://chamroukhi.com/papers/chamroukhi_et_al_neucomp2013b.pdf>."
-)
-
-citEntry(
-  entry = "Article",
-  title = "Model-Based Clustering and Classification of Functional Data",
-  author = personList(person(given="F.", family="Chamroukhi"),
-                      person(given="Hien D.", family="Nguyen")),
-  journal = "Wiley Interdisciplinary Reviews: Data Mining and Knowledge Discovery",
-  year = "2019",
-  url = "https://chamroukhi.com/papers/MBCC-FDA.pdf",
-  doi = "https://doi.org/10.1002/widm.1298",
-  textVersion = "Chamroukhi F, Nguyen H (2019). \u201cModel-Based Clustering and
-  Classification of Functional Data.\u201d _Wiley Interdisciplinary Reviews: Data Mining and
-  Knowledge Discovery_. doi: 10.1002/widm.1298 (URL: https://doi.org/10.1002/widm.1298),
-  <URL:https://chamroukhi.com/papers/MBCC-FDA.pdf>."
 )
 
 citEntry(
@@ -49,7 +49,7 @@ citEntry(
   number = "5-6",
   pages = "593--602",
   url = "https://chamroukhi.com/papers/Chamroukhi_Neural_Networks_2009.pdf",
-  textVersion = "Chamroukhi F, Sam\u00e9 A, Govaert G, Aknin P (2009). \u201cTime series modeling
-  by a  regression approach based on a latent process.\u201d _Neural Networks_, *22*(5-6),
-  593-602. <URL:https://chamroukhi.com/papers/Chamroukhi_Neural_Networks_2009.pdf>."
+  textVersion = "Chamroukhi F, Sam\u00e9 A, Govaert G, Aknin P (2009). \u201cTime series
+  modeling by a  regression approach based on a latent process.\u201d Neural Networks,
+  22(5-6), 593-602. <URL:https://chamroukhi.com/papers/Chamroukhi_Neural_Networks_2009.pdf>."
 )
