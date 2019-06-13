@@ -16,7 +16,7 @@ ParamMRHLP <- setRefClass(
 
     W = "matrix",
     beta = "array",
-    sigma = "array"),
+    sigma2 = "array"),
   methods = list(
     initialize = function(fData = FData(numeric(1), matrix(1)), K = 1, p = 2, q = 1, variance_type = 1) {
 
@@ -39,10 +39,10 @@ ParamMRHLP <- setRefClass(
       W <<- matrix(0, q + 1, K - 1)
       beta <<- array(NA, dim = c(p + 1, fData$m, K))
       if (variance_type == variance_types$homoskedastic) {
-        sigma <<- matrix(NA, fData$m, fData$m)
+        sigma2 <<- matrix(NA, fData$m, fData$m)
       }
       else{
-        sigma <<- array(NA, dim = c(fData$m, fData$m, K))
+        sigma2 <<- array(NA, dim = c(fData$m, fData$m, K))
       }
     },
 
@@ -77,10 +77,10 @@ ParamMRHLP <- setRefClass(
           sk <- t(yk - muk) %*% (yk - muk)
           if (variance_type == variance_types$homoskedastic) {
             s <- s + sk
-            sigma <<- s / n
+            sigma2 <<- s / n
           }
           else{
-            sigma[, , k] <<- sk / length(yk)
+            sigma2[, , k] <<- sk / length(yk)
           }
         }
 
@@ -119,10 +119,10 @@ ParamMRHLP <- setRefClass(
 
           if (variance_type == variance_types$homoskedastic) {
             s <- s + sk
-            sigma <<- s / n
+            sigma2 <<- s / n
           }
           else{
-            sigma[, , k] <<- sk / length(yk)
+            sigma2[, , k] <<- sk / length(yk)
           }
         }
       }
@@ -157,9 +157,9 @@ ParamMRHLP <- setRefClass(
         if (variance_type == variance_types$homoskedastic) {
           s <- s + sk
 
-          sigma <<- s / fData$n
+          sigma2 <<- s / fData$n
         } else{
-          sigma[, , k] <<- sk / nk
+          sigma2[, , k] <<- sk / nk
         }
       }
 

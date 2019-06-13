@@ -110,17 +110,17 @@ StatMRHLP <- setRefClass(
       for (k in 1:paramMRHLP$K) {
         muk <- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[,,k]
         if (variance_type == variance_types$homoskedastic) {
-          sigmak <- paramMRHLP$sigma
+          sigma2k <- paramMRHLP$sigma2
         }else{
-          sigmak <- paramMRHLP$sigma[,,k]
+          sigma2k <- paramMRHLP$sigma2[,,k]
 
         }
 
-        z <- ((paramMRHLP$fData$Y - muk) %*% solve(sigmak)) * (paramMRHLP$fData$Y - muk)
+        z <- ((paramMRHLP$fData$Y - muk) %*% solve(sigma2k)) * (paramMRHLP$fData$Y - muk)
 
         mahalanobis <- matrix(rowSums(z))
 
-        denom <- (2*pi)^(paramMRHLP$fData$m/2) * (det(sigmak)) ^ 0.5
+        denom <- (2*pi)^(paramMRHLP$fData$m/2) * (det(sigma2k)) ^ 0.5
 
         log_piik_fik[,k] <<- log(piik[,k]) - ones(paramMRHLP$fData$n, 1) %*% log(denom) - 0.5 * mahalanobis
       }

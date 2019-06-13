@@ -102,9 +102,9 @@ ModelMRHLP <- setRefClass(
 
         if (paramMRHLP$variance_type == variance_types$heteroskedastic) {
           cat("\nCovariance matrix:\n")
-          sigma <- data.frame(paramMRHLP$sigma[, , k])
-          colnames(sigma) <- NULL
-          print(sigma, digits = digits, row.names = FALSE)
+          sigma2 <- data.frame(paramMRHLP$sigma2[, , k])
+          colnames(sigma2) <- NULL
+          print(sigma2, digits = digits, row.names = FALSE)
         }
       }
 
@@ -114,9 +114,9 @@ ModelMRHLP <- setRefClass(
         cat(txt)
         cat("\nCommon covariance matrix:\n")
         cat(txt)
-        sigma <- data.frame(paramMRHLP$sigma)
-        colnames(sigma) <- NULL
-        print(sigma, digits = digits, row.names = FALSE)
+        sigma2 <- data.frame(paramMRHLP$sigma2)
+        colnames(sigma2) <- NULL
+        print(sigma2, digits = digits, row.names = FALSE)
       }
 
     }
