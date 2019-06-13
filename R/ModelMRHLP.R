@@ -52,6 +52,73 @@ ModelMRHLP <- setRefClass(
       # # Model log-likelihood during EM
       # par(mfrow = c(1, 1))
       # plot.default(unlist(statMRHLP$stored_loglik), type = "l", xlab = "EM iteration number", ylab = "log-lokelihodd", col = "blue")
+    },
+
+    summary = function() {
+
+      digits = getOption("digits")
+
+      title <- paste("Fitted MRHLP model")
+      txt <- paste(rep("-", min(nchar(title) + 4, getOption("width"))), collapse = "")
+
+      # Title
+      cat(txt)
+      cat("\n")
+      cat(title)
+      cat("\n")
+      cat(txt)
+
+      cat("\n")
+      cat("\n")
+      cat(paste0("MRHLP model with K = ", paramMRHLP$K, ifelse(paramMRHLP$K > 1, " regimes", " regime")))
+      cat("\n")
+      cat("\n")
+
+      tab <- data.frame("log-likelihood" = statMRHLP$log_lik, "nu" = paramMRHLP$nu, "AIC" = statMRHLP$AIC,
+                        "BIC" = statMRHLP$BIC, "ICL" = statMRHLP$ICL, row.names = "", check.names = FALSE)
+      print(tab, digits = digits)
+
+      cat("\nClustering table:")
+      print(table(statMRHLP$klas))
+
+      cat("\n\n")
+
+      txt <- paste(rep("-", min(nchar(title), getOption("width"))), collapse = "")
+
+      for (k in 1:paramMRHLP$K) {
+        cat(txt)
+        cat("\nRegime ", k, " (K = ", k, "):\n", sep = "")
+
+        cat("\nRegression coefficients:\n\n")
+        if (paramMRHLP$p > 0) {
+          row.names = c("1", sapply(1:paramMRHLP$p, function(x) paste0("X^", x)))
+        } else {
+          row.names = "1"
+        }
+
+        betas <- data.frame(paramMRHLP$beta[, , k], row.names = row.names)
+        colnames(betas) <- sapply(1:paramMRHLP$fData$m, function(x) paste0("Beta(d = ", x, ")"))
+        print(betas, digits = digits)
+
+        if (paramMRHLP$variance_type == variance_types$heteroskedastic) {
+          cat("\nCovariance matrix:\n")
+          sigma <- data.frame(paramMRHLP$sigma[, , k])
+          colnames(sigma) <- NULL
+          print(sigma, digits = digits, row.names = FALSE)
+        }
+      }
+
+      if (paramMRHLP$variance_type == variance_types$homoskedastic) {
+        cat("\n")
+        txt <- paste(rep("-", min(nchar(title), getOption("width"))), collapse = "")
+        cat(txt)
+        cat("\nCommon covariance matrix:\n")
+        cat(txt)
+        sigma <- data.frame(paramMRHLP$sigma)
+        colnames(sigma) <- NULL
+        print(sigma, digits = digits, row.names = FALSE)
+      }
+
     }
   )
 )

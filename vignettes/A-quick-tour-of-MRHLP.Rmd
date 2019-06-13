@@ -68,15 +68,17 @@ solution <- emMRHLP(simulatedtimeseries$X, as.matrix(simulatedtimeseries[,2:4]),
                    variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 ```
 
+## Summary
+
+```{r}
+solution$summary()
+```
 
 ## Simulated data results plots
 
 ```{r}
 solution$plot()
 ```
-
-
-
 
 # Load simulated data
 
@@ -106,7 +108,6 @@ verbose <- TRUE
 verbose_IRLS <- FALSE
 ```
 
-
 ## Estimation
 
 ```{r}
@@ -114,12 +115,14 @@ solution <- emMRHLP(humanaccelerations$X, as.matrix(humanaccelerations[,2:4]),  
                    variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 ```
 
+## Summary
+
+```{r}
+solution$summary()
+```
 
 ## Plots
 
 ```{r}
 solution$plot()
 ```
-
-
-
