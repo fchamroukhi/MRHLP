@@ -1,3 +1,12 @@
+#' A Reference Class which represents a fitted MRHLP model.
+#'
+#' ModelMRHLP represents a [MRHLP][ModelMRHLP] model for which parameters have
+#' been estimated.
+#'
+#' @usage NULL
+#' @field paramMRHLP A [ParamMRHLP][ParamMRHLP] object. It contains the estimated values of the parameters.
+#' @field statMRHLP A [StatMRHLP][StatMRHLP] object. It contains all the statistics associated to the MRHLP model.
+#' @seealso [ParamMRHLP], [StatMRHLP]
 #' @export
 ModelMRHLP <- setRefClass(
   "ModelMRHLP",
