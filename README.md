@@ -55,9 +55,46 @@ threshold <- 1e-6
 verbose <- TRUE
 verbose_IRLS <- FALSE
 
-mrhlp <- emMRHLP(simulatedtimeseries$X, simulatedtimeseries[,2:ncol(simulatedtimeseries)],  
+mrhlp <- emMRHLP(simulatedtimeseries$X, simulatedtimeseries[,2:ncol(simulatedtimeseries)], 
                  K, p, q, variance_type, n_tries, max_iter, threshold, verbose,
                  verbose_IRLS)
+#> EM try number: 1
+#> 
+#> EM: Iteration : 1 || log-likelihood : -4975.54177550763
+#> EM: Iteration : 2 || log-likelihood : -3108.34368262058
+#> EM: Iteration : 3 || log-likelihood : -3083.1752428408
+#> EM: Iteration : 4 || log-likelihood : -3052.50226051978
+#> EM: Iteration : 5 || log-likelihood : -3020.60866768048
+#> EM: Iteration : 6 || log-likelihood : -2967.37662519614
+#> EM: Iteration : 7 || log-likelihood : -2948.61300519917
+#> EM: Iteration : 8 || log-likelihood : -2945.45995943221
+#> EM: Iteration : 9 || log-likelihood : -2937.99296971708
+#> EM: Iteration : 10 || log-likelihood : -2924.28973576607
+#> EM: Iteration : 11 || log-likelihood : -2901.2508047746
+#> EM: Iteration : 12 || log-likelihood : -2859.8824925521
+#> EM: Iteration : 13 || log-likelihood : -2858.05147220476
+#> EM: Iteration : 14 || log-likelihood : -2856.3801536493
+#> EM: Iteration : 15 || log-likelihood : -2854.68196724959
+#> EM: Iteration : 16 || log-likelihood : -2852.69581357181
+#> EM: Iteration : 17 || log-likelihood : -2849.93140670748
+#> EM: Iteration : 18 || log-likelihood : -2846.34467325558
+#> EM: Iteration : 19 || log-likelihood : -2843.82658689678
+#> EM: Iteration : 20 || log-likelihood : -2842.7592148674
+#> EM: Iteration : 21 || log-likelihood : -2842.23613089282
+#> EM: Iteration : 22 || log-likelihood : -2841.91343875899
+#> EM: Iteration : 23 || log-likelihood : -2841.66202743911
+#> EM: Iteration : 24 || log-likelihood : -2841.41784740563
+#> EM: Iteration : 25 || log-likelihood : -2841.14668922189
+#> EM: Iteration : 26 || log-likelihood : -2840.82033080971
+#> EM: Iteration : 27 || log-likelihood : -2840.3914103162
+#> EM: Iteration : 28 || log-likelihood : -2839.7453280056
+#> EM: Iteration : 29 || log-likelihood : -2838.62532232957
+#> EM: Iteration : 30 || log-likelihood : -2836.64319634389
+#> EM: Iteration : 31 || log-likelihood : -2833.87378868354
+#> EM: Iteration : 32 || log-likelihood : -2831.75584259331
+#> EM: Iteration : 33 || log-likelihood : -2831.16293538952
+#> EM: Iteration : 34 || log-likelihood : -2831.06467842039
+#> EM: Iteration : 35 || log-likelihood : -2831.06467491194
 
 mrhlp$summary()
 #> ----------------------
@@ -67,7 +104,7 @@ mrhlp$summary()
 #> MRHLP model with K = 5 regimes
 #> 
 #>  log-likelihood nu       AIC       BIC       ICL
-#>       -2831.065 33 -2864.065 -2849.192 -2848.416
+#>       -2831.065 98 -2929.065 -3149.921 -3149.146
 #> 
 #> Clustering table:
 #>   1   2   3   4   5 

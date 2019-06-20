@@ -30,14 +30,11 @@ ParamMRHLP <- setRefClass(
     fData = "FData",
     phi = "list",
 
-    K = "numeric",
-    # number of regimes
-    p = "numeric",
-    # dimension of beta (order of polynomial regression)
-    q = "numeric",
-    # dimension of w (order of logistic regression)
+    K = "numeric", # Number of regimes
+    p = "numeric", # Dimension of beta (order of polynomial regression)
+    q = "numeric", # Dimension of w (order of logistic regression)
     variance_type = "character",
-    nu = "numeric", # degree of freedom
+    nu = "numeric", # Degree of freedom
 
     W = "matrix",
     beta = "array",
@@ -55,10 +52,9 @@ ParamMRHLP <- setRefClass(
       variance_type <<- variance_type
 
       if (variance_type == "homoskedastic") {
-        nu <<- (p + q + 3) * K - (q + 1) - (K - 1)
-      }
-      else{
-        nu <<- (p + q + 3) * K - (q + 1)
+        nu <<- (q + 1) * (K - 1) + K * (p + 1) * fData$m + fData$m * (fData$m + 1) / 2
+      } else {
+        nu <<- (q + 1) * (K - 1) + K * (p + 1) * fData$m + K * fData$m * (fData$m + 1) / 2
       }
 
       W <<- matrix(0, q + 1, K - 1)
@@ -98,7 +94,7 @@ ParamMRHLP <- setRefClass(
           j <- k * zi
 
           yk <- fData$Y[i:j, ]
-          Xk <- phi$XBeta[i:j, ]
+          Xk <- as.matrix(phi$XBeta[i:j, ])
 
           beta[, , k] <<- solve(t(Xk) %*% Xk) %*% t(Xk) %*% yk
 

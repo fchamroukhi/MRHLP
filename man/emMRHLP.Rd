@@ -4,9 +4,9 @@
 \alias{emMRHLP}
 \title{emMRHLP is used to fit a MRHLP model.}
 \usage{
-emMRHLP(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1,
-  max_iter = 1500, threshold = 1e-06, verbose = FALSE,
-  verbose_IRLS = FALSE)
+emMRHLP(X, Y, K, p, q = 1, variance_type = c("heteroskedastic",
+  "homoskedastic"), n_tries = 1, max_iter = 1500, threshold = 1e-06,
+  verbose = FALSE, verbose_IRLS = FALSE)
 }
 \arguments{
 \item{X}{Numeric vector of length \emph{m} representing the covariates.}

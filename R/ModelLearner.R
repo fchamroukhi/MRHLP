@@ -40,7 +40,7 @@
 #' @return EM returns an object of class [ModelMRHLP][ModelMRHLP].
 #' @seealso [ModelMRHLP], [ParamMRHLP], [StatMRHLP]
 #' @export
-emMRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter = 1500, threshold = 1e-6, verbose = FALSE, verbose_IRLS = FALSE) {
+emMRHLP <- function(X, Y, K, p, q = 1, variance_type = c("heteroskedastic", "homoskedastic"), n_tries = 1, max_iter = 1500, threshold = 1e-6, verbose = FALSE, verbose_IRLS = FALSE) {
     fData <- FData(X, Y)
 
     top <- 0
@@ -50,10 +50,15 @@ emMRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter 
 
     while (try_EM < n_tries) {
       try_EM <- try_EM + 1
-      message("EM try nr ", try_EM)
+
+      if (verbose) {
+          cat(paste0("EM try number: ", try_EM, "\n\n"))
+      }
+
       time <- Sys.time()
 
       # Initializations
+      variance_type <- match.arg(variance_type)
       param <- ParamMRHLP$new(fData = fData, K = K, p = p, q = q, variance_type = variance_type)
       param$initParam(try_EM)
       iter <- 0
@@ -71,13 +76,10 @@ emMRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter 
 
         iter <- iter + 1
         if (verbose) {
-          message("EM     : Iteration : ",
-                  iter,
-                  "  log-likelihood : "  ,
-                  stat$log_lik)
+          cat(paste0("EM: Iteration : ", iter, " || log-likelihood : "  , stat$log_lik, "\n"))
         }
         if (prev_loglik - stat$log_lik > 1e-5) {
-          message("!!!!! EM log-likelihood is decreasing from ", prev_loglik, "to ", stat$log_lik)
+          warning(paste0("EM log-likelihood is decreasing from ", prev_loglik, "to ", stat$log_lik, " !"))
           top <- top + 1
           if (top > 20)
             break
@@ -115,7 +117,7 @@ emMRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter 
         best_loglik <- stat$log_lik
       }
       if (n_tries > 1) {
-        message("max value: ", stat$log_lik)
+        cat(paste0("Max value of the log-likelihood: ", stat$log_lik, "\n"))
       }
     }
 
@@ -123,7 +125,7 @@ emMRHLP <- function(X, Y, K, p, q = 1, variance_type = 2, n_tries = 1, max_iter 
     statSolution$MAP()
 
     if (n_tries > 1) {
-      message("max value: ", statSolution$log_lik)
+      cat(paste0("Max value of the log-likelihood: ", statSolution$log_lik, "\n"))
     }
 
 

@@ -111,11 +111,12 @@ ModelMRHLP <- setRefClass(
         cat("\nRegression coefficients:\n\n")
         if (paramMRHLP$p > 0) {
           row.names = c("1", sapply(1:paramMRHLP$p, function(x) paste0("X^", x)))
+          betas <- data.frame(paramMRHLP$beta[, , k], row.names = row.names)
         } else {
           row.names = "1"
+          betas <- data.frame(t(paramMRHLP$beta[, , k]), row.names = row.names)
         }
 
-        betas <- data.frame(paramMRHLP$beta[, , k], row.names = row.names)
         colnames(betas) <- sapply(1:paramMRHLP$fData$m, function(x) paste0("Beta(d = ", x, ")"))
         print(betas, digits = digits)
 

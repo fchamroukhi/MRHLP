@@ -86,8 +86,8 @@ StatMRHLP <- setRefClass(
       log_piik_fik <<- matrix(0, paramMRHLP$fData$n, paramMRHLP$K)
       log_sum_piik_fik <<- matrix(NA, paramMRHLP$fData$n, 1)
       tik <<- matrix(0, paramMRHLP$fData$n, paramMRHLP$K)
-      polynomials <<- array(NA, dim = c(paramMRHLP$fData$n, paramMRHLP$p, paramMRHLP$K))
-      weighted_polynomials <<- array(NA, dim = c(paramMRHLP$fData$n, paramMRHLP$p, paramMRHLP$K))
+      polynomials <<- array(NA, dim = c(paramMRHLP$fData$n, paramMRHLP$fData$m, paramMRHLP$K))
+      weighted_polynomials <<- array(NA, dim = c(paramMRHLP$fData$n, paramMRHLP$fData$m, paramMRHLP$K))
     },
 
     MAP = function() {
@@ -128,8 +128,8 @@ StatMRHLP <- setRefClass(
     # compute the final solution stats
     #######
     computeStats = function(paramMRHLP, cpu_time_all) {
-      for (k in 1:K) {
-        polynomials[,,k] <<- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[,,k]
+      for (k in 1:paramMRHLP$K) {
+        polynomials[, , k] <<- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[, , k]
         weighted_polynomials[,,k] <<- (piik[,k] %*% ones(1, paramMRHLP$fData$m)) * polynomials[,,k]
       }
 
@@ -138,7 +138,7 @@ StatMRHLP <- setRefClass(
 
       cpu_time <<- mean(cpu_time_all)
       # Psi <- c(as.vector(paramRHLP$Wk), as.vector(paramRHLP$betak), as.vector(paramRHLP$sigmak))
-      BIC <<- log_lik - (paramMRHLP$nu * log(paramMRHLP$fData$m) / 2)
+      BIC <<- log_lik - (paramMRHLP$nu * log(paramMRHLP$fData$n) / 2)
       AIC <<- log_lik - paramMRHLP$nu
 
 
@@ -147,7 +147,7 @@ StatMRHLP <- setRefClass(
       com_loglik <<- sum(rowSums(zik_log_alphag_fg_xij))
 
 
-      ICL <<- com_loglik - paramMRHLP$nu * log(paramMRHLP$fData$m) / 2
+      ICL <<- com_loglik - paramMRHLP$nu * log(paramMRHLP$fData$n) / 2
     },
     #######
     # EStep
@@ -160,7 +160,7 @@ StatMRHLP <- setRefClass(
 
       for (k in 1:paramMRHLP$K) {
         muk <- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[,,k]
-        if (variance_type == "homoskedastic") {
+        if (paramMRHLP$variance_type == "homoskedastic") {
           sigma2k <- paramMRHLP$sigma2
         }else{
           sigma2k <- paramMRHLP$sigma2[,,k]
