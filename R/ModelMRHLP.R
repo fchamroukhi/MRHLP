@@ -22,28 +22,28 @@ ModelMRHLP <- setRefClass(
       oldpar <- par()[c("mfrow", "mai", "mgp")]
       on.exit(par(oldpar), add = TRUE)
 
-      yaxislim <- c(min(paramMRHLP$fData$Y) - 2 * mean(sqrt(apply(paramMRHLP$fData$Y, 2, var))), max(paramMRHLP$fData$Y) + 2 * mean(sqrt(apply(paramMRHLP$fData$Y, 2, var))))
+      yaxislim <- c(min(paramMRHLP$mData$Y) - 2 * mean(sqrt(apply(paramMRHLP$mData$Y, 2, var))), max(paramMRHLP$mData$Y) + 2 * mean(sqrt(apply(paramMRHLP$mData$Y, 2, var))))
 
       if (any(what == "regressors")) {
         # Data, regressors, and segmentation
         par(mfrow = c(2, 1), mai = c(0.6, 1, 0.5, 0.5), mgp = c(2, 1, 0))
-        matplot(paramMRHLP$fData$X, paramMRHLP$fData$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y", col = gray.colors(paramMRHLP$fData$m), lty = 1)
+        matplot(paramMRHLP$mData$X, paramMRHLP$mData$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y", col = gray.colors(paramMRHLP$mData$d), lty = 1)
         title(main = "Time series, MRHLP regimes, and process probabilites")
         colorsvec <- rainbow(paramMRHLP$K)
         for (k in 1:paramMRHLP$K) {
           index <- (statMRHLP$klas == k)
-          for (d in 1:paramMRHLP$fData$m) {
+          for (d in 1:paramMRHLP$mData$d) {
             polynomials <- statMRHLP$polynomials[index, d, k]
-            lines(paramMRHLP$fData$X, statMRHLP$polynomials[, d, k], col = colorsvec[k], lty = "dotted", lwd = 1)
-            lines(paramMRHLP$fData$X[index], polynomials, col = colorsvec[k], lwd = 1.5)
+            lines(paramMRHLP$mData$X, statMRHLP$polynomials[, d, k], col = colorsvec[k], lty = "dotted", lwd = 1)
+            lines(paramMRHLP$mData$X[index], polynomials, col = colorsvec[k], lwd = 1.5)
           }
         }
 
         # Probablities of the hidden process (segmentation)
-        plot.default(paramMRHLP$fData$X, statMRHLP$piik[, 1], type = "l", xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)), col = colorsvec[1], lwd = 1.5)
+        plot.default(paramMRHLP$mData$X, statMRHLP$piik[, 1], type = "l", xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)), col = colorsvec[1], lwd = 1.5)
         if (paramMRHLP$K > 1) {
           for (k in 2:paramMRHLP$K) {
-            lines(paramMRHLP$fData$X, statMRHLP$piik[, k], col = colorsvec[k], lwd = 1.5, ylim = c(0, 1))
+            lines(paramMRHLP$mData$X, statMRHLP$piik[, k], col = colorsvec[k], lwd = 1.5, ylim = c(0, 1))
           }
         }
       }
@@ -51,20 +51,20 @@ ModelMRHLP <- setRefClass(
       if (any(what == "meancurve")) {
         # Data, regression model, and segmentation
         par(mfrow = c(2, 1), mai = c(0.6, 1, 0.5, 0.5), mgp = c(2, 1, 0))
-        matplot(paramMRHLP$fData$X, paramMRHLP$fData$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y", col = gray.colors(paramMRHLP$fData$m), lty = 1)
+        matplot(paramMRHLP$mData$X, paramMRHLP$mData$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y", col = gray.colors(paramMRHLP$mData$d), lty = 1)
         title(main = "Time series, estimated MRHLP model, and segmentation")
-        for (d in 1:paramMRHLP$fData$m) {
-          lines(paramMRHLP$fData$X, statMRHLP$Ex[, d], col = "red" , lwd = 1.5)
+        for (d in 1:paramMRHLP$mData$d) {
+          lines(paramMRHLP$mData$X, statMRHLP$Ex[, d], col = "red" , lwd = 1.5)
         }
 
         # Transition time points
         tk = which(diff(statMRHLP$klas) != 0)
         for (i in 1:length(tk)) {
-          abline(v = paramMRHLP$fData$X[tk[i]], col = "red", lty = "dotted", lwd = 1.5)
+          abline(v = paramMRHLP$mData$X[tk[i]], col = "red", lty = "dotted", lwd = 1.5)
         }
 
         # Probablities of the hidden process (segmentation)
-        plot.default(paramMRHLP$fData$X, statMRHLP$klas, type = "l", xlab = "", ylab = "Estimated class labels", col = "red", lwd = 1.5, yaxt = "n")
+        plot.default(paramMRHLP$mData$X, statMRHLP$klas, type = "l", xlab = "", ylab = "Estimated class labels", col = "red", lwd = 1.5, yaxt = "n")
         axis(side = 2, at = 1:paramMRHLP$K)
       }
 
@@ -117,7 +117,7 @@ ModelMRHLP <- setRefClass(
           betas <- data.frame(t(paramMRHLP$beta[, , k]), row.names = row.names)
         }
 
-        colnames(betas) <- sapply(1:paramMRHLP$fData$m, function(x) paste0("Beta(d = ", x, ")"))
+        colnames(betas) <- sapply(1:paramMRHLP$mData$d, function(x) paste0("Beta(d = ", x, ")"))
         print(betas, digits = digits)
 
         if (paramMRHLP$variance_type == "heteroskedastic") {

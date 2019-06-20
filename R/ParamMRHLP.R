@@ -2,7 +2,7 @@
 #'
 #' ParamMRHLP contains all the parameters of a MRHLP model.
 #'
-#' @field fData [FData][FData] object representing the sample.
+#' @field mData [MData][MData] object representing the sample.
 #' @field K The number of regimes (mixture components).
 #' @field p The order of the polynomial regression.
 #' @field q The dimension of the logistic regression. For the purpose of
@@ -22,12 +22,12 @@
 #' homoskedastic (\emph{variance_type} = 1) then sigma2 is a matrix of size
 #' \eqn{(1, 1)}, else if MRHLP model is heteroskedastic then sigma2 is a matrix
 #' of size \eqn{(K, 1)}.
-#' @seealso [FData]
+#' @seealso [MData]
 #' @export
 ParamMRHLP <- setRefClass(
   "ParamMRHLP",
   fields = list(
-    fData = "FData",
+    mData = "MData",
     phi = "list",
 
     K = "numeric", # Number of regimes
@@ -40,11 +40,11 @@ ParamMRHLP <- setRefClass(
     beta = "array",
     sigma2 = "array"),
   methods = list(
-    initialize = function(fData = FData(numeric(1), matrix(1)), K = 1, p = 3, q = 1, variance_type = "heteroskedastic") {
+    initialize = function(mData = MData(numeric(1), matrix(1)), K = 1, p = 3, q = 1, variance_type = "heteroskedastic") {
 
-      fData <<- fData
+      mData <<- mData
 
-      phi <<- designmatrix(x = fData$X, p = p, q = q)
+      phi <<- designmatrix(x = mData$X, p = p, q = q)
 
       K <<- K
       p <<- p
@@ -52,18 +52,18 @@ ParamMRHLP <- setRefClass(
       variance_type <<- variance_type
 
       if (variance_type == "homoskedastic") {
-        nu <<- (q + 1) * (K - 1) + K * (p + 1) * fData$m + fData$m * (fData$m + 1) / 2
+        nu <<- (q + 1) * (K - 1) + K * (p + 1) * mData$d + mData$d * (mData$d + 1) / 2
       } else {
-        nu <<- (q + 1) * (K - 1) + K * (p + 1) * fData$m + K * fData$m * (fData$m + 1) / 2
+        nu <<- (q + 1) * (K - 1) + K * (p + 1) * mData$d + K * mData$d * (mData$d + 1) / 2
       }
 
       W <<- matrix(0, q + 1, K - 1)
-      beta <<- array(NA, dim = c(p + 1, fData$m, K))
+      beta <<- array(NA, dim = c(p + 1, mData$d, K))
       if (variance_type == "homoskedastic") {
-        sigma2 <<- matrix(NA, fData$m, fData$m)
+        sigma2 <<- matrix(NA, mData$d, mData$d)
       }
       else{
-        sigma2 <<- array(NA, dim = c(fData$m, fData$m, K))
+        sigma2 <<- array(NA, dim = c(mData$d, mData$d, K))
       }
     },
 
@@ -93,7 +93,7 @@ ParamMRHLP <- setRefClass(
           i <- (k - 1) * zi + 1
           j <- k * zi
 
-          yk <- fData$Y[i:j, ]
+          yk <- mData$Y[i:j, ]
           Xk <- as.matrix(phi$XBeta[i:j, ])
 
           beta[, , k] <<- solve(t(Xk) %*% Xk) %*% t(Xk) %*% yk
@@ -133,7 +133,7 @@ ParamMRHLP <- setRefClass(
           i <- tk_init[k] + 1
           j <- tk_init[k + 1]
 
-          yk <- fData$Y[i:j, ]
+          yk <- mData$Y[i:j, ]
           Xk <- phi$XBeta[i:j, ]
 
 
@@ -168,7 +168,7 @@ ParamMRHLP <- setRefClass(
 
         Xk <- phi$XBeta * (sqrt(weights) %*% ones(1, p + 1))
         #[m*(p+1)]
-        yk <- fData$Y * (sqrt(weights) %*% ones(1, fData$m))
+        yk <- mData$Y * (sqrt(weights) %*% ones(1, mData$d))
         # dimension :(nx1).*(nx1) = (nx1)
 
         M <- t(Xk) %*% Xk
@@ -176,14 +176,14 @@ ParamMRHLP <- setRefClass(
         M <- M + epps * diag(p + 1)
 
         beta[, , k] <<- solve(M) %*% t(Xk) %*% yk # Maximization w.r.t betak
-        z <- (fData$Y - phi$XBeta %*% beta[, , k]) * (sqrt(weights) %*% ones(1, fData$m))
+        z <- (mData$Y - phi$XBeta %*% beta[, , k]) * (sqrt(weights) %*% ones(1, mData$d))
         # Maximisation w.r.t sigmak (the variances)
 
         sk <- t(z) %*% z
         if (variance_type == "homoskedastic") {
           s <- s + sk
 
-          sigma2 <<- s / fData$n
+          sigma2 <<- s / mData$m
         } else{
           sigma2[, , k] <<- sk / nk
         }

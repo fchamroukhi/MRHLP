@@ -11,7 +11,7 @@ ParamMRHLP contains all the parameters of a MRHLP model.
 \section{Fields}{
 
 \describe{
-\item{\code{fData}}{\link{FData} object representing the sample.}
+\item{\code{mData}}{\link{MData} object representing the sample.}
 
 \item{\code{K}}{The number of regimes (mixture components).}
 
@@ -56,5 +56,5 @@ based on statistics provided by \code{statMRHLP}.}
 }}
 
 \seealso{
-\link{FData}
+\link{MData}
 }

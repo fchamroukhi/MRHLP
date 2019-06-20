@@ -71,10 +71,10 @@ StatMRHLP <- setRefClass(
 
     initialize = function(paramMRHLP = ParamMRHLP()) {
 
-      piik <<- matrix(NA, paramMRHLP$fData$n, paramMRHLP$K)
-      z_ik <<- matrix(NA, paramMRHLP$fData$n, paramMRHLP$K)
-      klas <<- matrix(NA, paramMRHLP$fData$n, 1)
-      Ex <<- matrix(NA, paramMRHLP$fData$n, paramMRHLP$K)
+      piik <<- matrix(NA, paramMRHLP$mData$m, paramMRHLP$K)
+      z_ik <<- matrix(NA, paramMRHLP$mData$m, paramMRHLP$K)
+      klas <<- matrix(NA, paramMRHLP$mData$m, 1)
+      Ex <<- matrix(NA, paramMRHLP$mData$m, paramMRHLP$K)
       log_lik <<- -Inf
       com_loglik <<- -Inf
       stored_loglik <<- list()
@@ -83,11 +83,11 @@ StatMRHLP <- setRefClass(
       ICL <<- -Inf
       AIC <<- -Inf
       cpu_time <<- Inf
-      log_piik_fik <<- matrix(0, paramMRHLP$fData$n, paramMRHLP$K)
-      log_sum_piik_fik <<- matrix(NA, paramMRHLP$fData$n, 1)
-      tik <<- matrix(0, paramMRHLP$fData$n, paramMRHLP$K)
-      polynomials <<- array(NA, dim = c(paramMRHLP$fData$n, paramMRHLP$fData$m, paramMRHLP$K))
-      weighted_polynomials <<- array(NA, dim = c(paramMRHLP$fData$n, paramMRHLP$fData$m, paramMRHLP$K))
+      log_piik_fik <<- matrix(0, paramMRHLP$mData$m, paramMRHLP$K)
+      log_sum_piik_fik <<- matrix(NA, paramMRHLP$mData$m, 1)
+      tik <<- matrix(0, paramMRHLP$mData$m, paramMRHLP$K)
+      polynomials <<- array(NA, dim = c(paramMRHLP$mData$m, paramMRHLP$mData$d, paramMRHLP$K))
+      weighted_polynomials <<- array(NA, dim = c(paramMRHLP$mData$m, paramMRHLP$mData$d, paramMRHLP$K))
     },
 
     MAP = function() {
@@ -130,7 +130,7 @@ StatMRHLP <- setRefClass(
     computeStats = function(paramMRHLP, cpu_time_all) {
       for (k in 1:paramMRHLP$K) {
         polynomials[, , k] <<- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[, , k]
-        weighted_polynomials[,,k] <<- (piik[,k] %*% ones(1, paramMRHLP$fData$m)) * polynomials[,,k]
+        weighted_polynomials[,,k] <<- (piik[,k] %*% ones(1, paramMRHLP$mData$d)) * polynomials[,,k]
       }
 
       #Ex <<- matrix(rowSums(weighted_polynomials))
@@ -138,7 +138,7 @@ StatMRHLP <- setRefClass(
 
       cpu_time <<- mean(cpu_time_all)
       # Psi <- c(as.vector(paramRHLP$Wk), as.vector(paramRHLP$betak), as.vector(paramRHLP$sigmak))
-      BIC <<- log_lik - (paramMRHLP$nu * log(paramMRHLP$fData$n) / 2)
+      BIC <<- log_lik - (paramMRHLP$nu * log(paramMRHLP$mData$m) / 2)
       AIC <<- log_lik - paramMRHLP$nu
 
 
@@ -147,7 +147,7 @@ StatMRHLP <- setRefClass(
       com_loglik <<- sum(rowSums(zik_log_alphag_fg_xij))
 
 
-      ICL <<- com_loglik - paramMRHLP$nu * log(paramMRHLP$fData$n) / 2
+      ICL <<- com_loglik - paramMRHLP$nu * log(paramMRHLP$mData$m) / 2
     },
     #######
     # EStep
@@ -155,7 +155,7 @@ StatMRHLP <- setRefClass(
     EStep = function(paramMRHLP) {
       "Method used in the EM algorithm to update statistics based on parameters
       provided by \\code{paramMRHLP} (prior and posterior probabilities)."
-      piik <<- multinomialLogit(paramMRHLP$W, paramMRHLP$phi$Xw, ones(paramMRHLP$fData$n, paramMRHLP$K), ones(paramMRHLP$fData$n, 1))$piik
+      piik <<- multinomialLogit(paramMRHLP$W, paramMRHLP$phi$Xw, ones(paramMRHLP$mData$m, paramMRHLP$K), ones(paramMRHLP$mData$m, 1))$piik
       #log_piik_fik <<- zeros(modelMRHLP$n, modelMRHLP$K)
 
       for (k in 1:paramMRHLP$K) {
@@ -167,13 +167,13 @@ StatMRHLP <- setRefClass(
 
         }
 
-        z <- ((paramMRHLP$fData$Y - muk) %*% solve(sigma2k)) * (paramMRHLP$fData$Y - muk)
+        z <- ((paramMRHLP$mData$Y - muk) %*% solve(sigma2k)) * (paramMRHLP$mData$Y - muk)
 
         mahalanobis <- matrix(rowSums(z))
 
-        denom <- (2*pi)^(paramMRHLP$fData$m/2) * (det(sigma2k)) ^ 0.5
+        denom <- (2*pi)^(paramMRHLP$mData$d/2) * (det(as.matrix(sigma2k))) ^ 0.5
 
-        log_piik_fik[,k] <<- log(piik[,k]) - ones(paramMRHLP$fData$n, 1) %*% log(denom) - 0.5 * mahalanobis
+        log_piik_fik[,k] <<- log(piik[,k]) - ones(paramMRHLP$mData$m, 1) %*% log(denom) - 0.5 * mahalanobis
       }
 
       log_piik_fik <<- pmax(log_piik_fik, log(.Machine$double.xmin))

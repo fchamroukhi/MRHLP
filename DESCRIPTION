@@ -30,7 +30,7 @@ Collate:
     MRHLP-package.R
     RcppExports.R
     utils.R
-    FData.R
+    MData.R
     ParamMRHLP.R
     StatMRHLP.R
     ModelMRHLP.R
