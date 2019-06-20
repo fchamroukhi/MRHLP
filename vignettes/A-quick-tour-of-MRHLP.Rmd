@@ -77,6 +77,14 @@ mrhlp$summary()
 
 # Plots
 
+## Fitted regressors
+
 ```{r}
-mrhlp$plot()
+mrhlp$plot(what = "regressors")
+```
+
+## Mean curve
+
+```{r}
+mrhlp$plot(what = "meancurve")
 ```
