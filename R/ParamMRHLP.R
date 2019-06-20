@@ -7,8 +7,10 @@
 #' @field p The order of the polynomial regression.
 #' @field q The dimension of the logistic regression. For the purpose of
 #' segmentation, it must be set to 1.
-#' @field variance_type Numeric indicating if the model is homoskedastic
-#' (`variance_type` = 1) or heteroskedastic (`variance_type` = 2).
+#' @field variance_type Character indicating if the model is homoskedastic
+#' (`variance_type = "homoskedastic"`) or heteroskedastic
+#' (`variance_type = "heteroskedastic"`). By default the model is
+#' heteroskedastic.
 #' @field W Parameters of the logistic process.
 #' \eqn{W = w_{1},\dots,w_{K-1}}{W = (w1,\dots,wK-1)} is a matrix of dimension
 #' \eqn{(q + 1, K - 1)}, with \emph{q} the order of the logistic regression.
@@ -34,14 +36,14 @@ ParamMRHLP <- setRefClass(
     # dimension of beta (order of polynomial regression)
     q = "numeric",
     # dimension of w (order of logistic regression)
-    variance_type = "numeric",
+    variance_type = "character",
     nu = "numeric", # degree of freedom
 
     W = "matrix",
     beta = "array",
     sigma2 = "array"),
   methods = list(
-    initialize = function(fData = FData(numeric(1), matrix(1)), K = 1, p = 2, q = 1, variance_type = 1) {
+    initialize = function(fData = FData(numeric(1), matrix(1)), K = 1, p = 3, q = 1, variance_type = "heteroskedastic") {
 
       fData <<- fData
 
@@ -52,7 +54,7 @@ ParamMRHLP <- setRefClass(
       q <<- q
       variance_type <<- variance_type
 
-      if (variance_type == variance_types$homoskedastic) {
+      if (variance_type == "homoskedastic") {
         nu <<- (p + q + 3) * K - (q + 1) - (K - 1)
       }
       else{
@@ -61,7 +63,7 @@ ParamMRHLP <- setRefClass(
 
       W <<- matrix(0, q + 1, K - 1)
       beta <<- array(NA, dim = c(p + 1, fData$m, K))
-      if (variance_type == variance_types$homoskedastic) {
+      if (variance_type == "homoskedastic") {
         sigma2 <<- matrix(NA, fData$m, fData$m)
       }
       else{
@@ -102,7 +104,7 @@ ParamMRHLP <- setRefClass(
 
           muk <- Xk %*% beta[, , k]
           sk <- t(yk - muk) %*% (yk - muk)
-          if (variance_type == variance_types$homoskedastic) {
+          if (variance_type == "homoskedastic") {
             s <- s + sk
             sigma2 <<- s / n
           }
@@ -144,7 +146,7 @@ ParamMRHLP <- setRefClass(
           muk <- Xk %*% beta[, , k]
           sk <- t(yk - muk) %*% (yk - muk)
 
-          if (variance_type == variance_types$homoskedastic) {
+          if (variance_type == "homoskedastic") {
             s <- s + sk
             sigma2 <<- s / n
           }
@@ -159,7 +161,7 @@ ParamMRHLP <- setRefClass(
       "Method used in the EM algorithm to learn the parameters of the MRHLP model
       based on statistics provided by \\code{statMRHLP}."
       # Maximization w.r.t betak and sigmak (the variances)
-      if (variance_type == variance_types$homoskedastic) {
+      if (variance_type == "homoskedastic") {
         s = 0
       }
       for (k in 1:K) {
@@ -182,7 +184,7 @@ ParamMRHLP <- setRefClass(
         # Maximisation w.r.t sigmak (the variances)
 
         sk <- t(z) %*% z
-        if (variance_type == variance_types$homoskedastic) {
+        if (variance_type == "homoskedastic") {
           s <- s + sk
 
           sigma2 <<- s / fData$n

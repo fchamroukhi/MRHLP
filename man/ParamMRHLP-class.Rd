@@ -20,8 +20,10 @@ ParamMRHLP contains all the parameters of a MRHLP model.
 \item{\code{q}}{The dimension of the logistic regression. For the purpose of
 segmentation, it must be set to 1.}
 
-\item{\code{variance_type}}{Numeric indicating if the model is homoskedastic
-(\code{variance_type} = 1) or heteroskedastic (\code{variance_type} = 2).}
+\item{\code{variance_type}}{Character indicating if the model is homoskedastic
+(\code{variance_type = "homoskedastic"}) or heteroskedastic
+(\code{variance_type = "heteroskedastic"}). By default the model is
+heteroskedastic.}
 
 \item{\code{W}}{Parameters of the logistic process.
 \eqn{W = w_{1},\dots,w_{K-1}}{W = (w1,\dots,wK-1)} is a matrix of dimension

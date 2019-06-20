@@ -68,7 +68,9 @@ StatMRHLP <- setRefClass(
     weighted_polynomials = "array"
   ),
   methods = list(
-    initialize = function(paramMRHLP = ParamMRHLP(fData = FData(numeric(1), matrix(1)), K = 1, p = 2, q = 1, variance_type = 1)) {
+
+    initialize = function(paramMRHLP = ParamMRHLP()) {
+
       piik <<- matrix(NA, paramMRHLP$fData$n, paramMRHLP$K)
       z_ik <<- matrix(NA, paramMRHLP$fData$n, paramMRHLP$K)
       klas <<- matrix(NA, paramMRHLP$fData$n, 1)
@@ -158,7 +160,7 @@ StatMRHLP <- setRefClass(
 
       for (k in 1:paramMRHLP$K) {
         muk <- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[,,k]
-        if (variance_type == variance_types$homoskedastic) {
+        if (variance_type == "homoskedastic") {
           sigma2k <- paramMRHLP$sigma2
         }else{
           sigma2k <- paramMRHLP$sigma2[,,k]

@@ -18,8 +18,9 @@
 #' @param p The order of the polynomial regression.
 #' @param q The dimension of the logistic regression. For the purpose of
 #' segmentation, it must be set to 1.
-#' @param variance_type Numeric indicating if the model is homoskedastic
-#' (`variance_type` = 1) or heteroskedastic (`variance_type` = 2).
+#' @param variance_type Optional character indicating if the model is
+#' "homoskedastic" or "heteroskedastic". By default the model is
+#' "heteroskedastic".
 #' @param n_tries Number of times EM algorithm will be launched.
 #' The solution providing the highest log-likelihood will be returned.
 #'

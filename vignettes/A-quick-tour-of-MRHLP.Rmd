@@ -31,7 +31,7 @@ library(MRHLP)
 
 # Introduction
 
-**MRHLP** is a contributed R package for segmentation. It provides functions for parameter estimation via the EM algorithm. This document gives a quick tour of **MRHLP** (version `r packageVersion("MRHLP")`) functionalities. It was written in R Markdown, using the [knitr](https://cran.r-project.org/package=knitr) package for production. 
+**MRHLP** is a R package for segmentation. It provides functions for parameter estimation via the EM algorithm. This document gives a quick tour of **MRHLP** (version `r packageVersion("MRHLP")`) functionalities. It was written in R Markdown, using the [knitr](https://cran.r-project.org/package=knitr) package for production. 
 See `help(package="MRHLP")` for further details and references provided by `citation("MRHLP")`.
 
 # Load simulated data
@@ -44,10 +44,10 @@ data("simulatedtimeseries")
 ## Set up MRHLP model parameters
 
 ```{r}
-K <- 5 # number of regimes (mixture components)
-p <- 3 # dimension of beta (order of the polynomial regressors)
-q <- 1 # dimension of w (order of the logistic regression: to be set to 1 for segmentation)
-variance_type <- variance_types$heteroskedastic
+K <- 5 # Number of regimes (mixture components)
+p <- 3 # Dimension of beta (order of the polynomial regressors)
+q <- 1 # Dimension of w (order of the logistic regression: to be set to 1 for segmentation)
+variance_type <- "heteroskedastic" # "heteroskedastic" or "homoskedastic" model
 ```
 
 ## Set up EM parameters
@@ -64,65 +64,19 @@ verbose_IRLS <- FALSE
 ## Estimation
 
 ```{r}
-solution <- emMRHLP(simulatedtimeseries$X, as.matrix(simulatedtimeseries[,2:4]),  K, p, q, 
-                   variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
+mrhlp <- emMRHLP(simulatedtimeseries$X, simulatedtimeseries[,2:ncol(simulatedtimeseries)], 
+                    K, p, q, variance_type, n_tries, max_iter, threshold, 
+                    verbose, verbose_IRLS)
 ```
 
 ## Summary
 
 ```{r}
-solution$summary()
+mrhlp$summary()
 ```
 
-## Simulated data results plots
+# Plots
 
 ```{r}
-solution$plot()
-```
-
-# Load simulated data
-
-```{r}
-rm(list = ls())
-data("humanaccelerations")
-```
-
-## Set up MRHLP model parameters
-We used the same MRHLP model parameters as for the simulated time series
-
-```{r include=FALSE}
-K <- 5 # number of regimes (mixture components)
-p <- 3 # dimension of beta (order of the polynomial regressors)
-q <- 1 # dimension of w (order of the logistic regression: to be set to 1 for segmentation)
-variance_type <- variance_types$heteroskedastic
-```
-
-## Set up EM parameters
-We used the same EM parameters as for the simulated time series
-
-```{r include=FALSE}
-n_tries <- 1
-max_iter = 1500
-threshold <- 1e-6
-verbose <- TRUE
-verbose_IRLS <- FALSE
-```
-
-## Estimation
-
-```{r}
-solution <- emMRHLP(humanaccelerations$X, as.matrix(humanaccelerations[,2:4]),  K, p, q, 
-                   variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
-```
-
-## Summary
-
-```{r}
-solution$summary()
-```
-
-## Plots
-
-```{r}
-solution$plot()
+mrhlp$plot()
 ```
