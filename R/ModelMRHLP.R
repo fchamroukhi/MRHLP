@@ -15,8 +15,8 @@ ModelMRHLP <- setRefClass(
     statMRHLP = "StatMRHLP"
   ),
   methods = list(
-    plot = function(what = c("regressors", "meancurve")) {
 
+    plot = function(what = c("regressors", "meancurve")) {
       what <- match.arg(what, several.ok = TRUE)
 
       oldpar <- par()[c("mfrow", "mai", "mgp")]
@@ -54,7 +54,7 @@ ModelMRHLP <- setRefClass(
         matplot(paramMRHLP$mData$X, paramMRHLP$mData$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y", col = gray.colors(paramMRHLP$mData$d), lty = 1)
         title(main = "Time series, estimated MRHLP model, and segmentation")
         for (d in 1:paramMRHLP$mData$d) {
-          lines(paramMRHLP$mData$X, statMRHLP$Ex[, d], col = "red" , lwd = 1.5)
+          lines(paramMRHLP$mData$X, statMRHLP$Ex[, d], col = "red", lwd = 1.5)
         }
 
         # Transition time points
@@ -74,7 +74,6 @@ ModelMRHLP <- setRefClass(
     },
 
     summary = function() {
-
       digits = getOption("digits")
 
       title <- paste("Fitted MRHLP model")
@@ -93,8 +92,9 @@ ModelMRHLP <- setRefClass(
       cat("\n")
       cat("\n")
 
-      tab <- data.frame("log-likelihood" = statMRHLP$log_lik, "nu" = paramMRHLP$nu, "AIC" = statMRHLP$AIC,
-                        "BIC" = statMRHLP$BIC, "ICL" = statMRHLP$ICL, row.names = "", check.names = FALSE)
+      tab <- data.frame("log-likelihood" = statMRHLP$log_lik, "nu" = paramMRHLP$nu,
+                   "AIC" = statMRHLP$AIC,"BIC" = statMRHLP$BIC, "ICL" = statMRHLP$ICL,
+                   row.names = "", check.names = FALSE)
       print(tab, digits = digits)
 
       cat("\nClustering table:")
@@ -142,4 +142,3 @@ ModelMRHLP <- setRefClass(
     }
   )
 )
-

@@ -68,9 +68,7 @@ StatMRHLP <- setRefClass(
     weighted_polynomials = "array"
   ),
   methods = list(
-
     initialize = function(paramMRHLP = ParamMRHLP()) {
-
       piik <<- matrix(NA, paramMRHLP$mData$m, paramMRHLP$K)
       z_ik <<- matrix(NA, paramMRHLP$mData$m, paramMRHLP$K)
       klas <<- matrix(NA, paramMRHLP$mData$m, 1)
@@ -116,31 +114,23 @@ StatMRHLP <- setRefClass(
         klas[z_ik[, k] == 1] <<- k
       }
     },
-    #######
-    # compute loglikelihood
-    #######
+
     computeLikelihood = function(reg_irls) {
       log_lik <<- sum(log_sum_piik_fik) + reg_irls
 
     },
 
-    #######
-    # compute the final solution stats
-    #######
     computeStats = function(paramMRHLP, cpu_time_all) {
       for (k in 1:paramMRHLP$K) {
         polynomials[, , k] <<- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[, , k]
-        weighted_polynomials[,,k] <<- (piik[,k] %*% ones(1, paramMRHLP$mData$d)) * polynomials[,,k]
+        weighted_polynomials[, , k] <<- (piik[, k] %*% ones(1, paramMRHLP$mData$d)) * polynomials[, , k]
       }
 
-      #Ex <<- matrix(rowSums(weighted_polynomials))
-      Ex <<- apply(weighted_polynomials, c(1,2), sum)
+      Ex <<- apply(weighted_polynomials, c(1, 2), sum)
 
       cpu_time <<- mean(cpu_time_all)
-      # Psi <- c(as.vector(paramRHLP$Wk), as.vector(paramRHLP$betak), as.vector(paramRHLP$sigmak))
       BIC <<- log_lik - (paramMRHLP$nu * log(paramMRHLP$mData$m) / 2)
       AIC <<- log_lik - paramMRHLP$nu
-
 
       zik_log_alphag_fg_xij <- (z_ik) * (log_piik_fik)
 
@@ -149,41 +139,35 @@ StatMRHLP <- setRefClass(
 
       ICL <<- com_loglik - paramMRHLP$nu * log(paramMRHLP$mData$m) / 2
     },
-    #######
-    # EStep
-    #######
+
     EStep = function(paramMRHLP) {
       "Method used in the EM algorithm to update statistics based on parameters
       provided by \\code{paramMRHLP} (prior and posterior probabilities)."
       piik <<- multinomialLogit(paramMRHLP$W, paramMRHLP$phi$Xw, ones(paramMRHLP$mData$m, paramMRHLP$K), ones(paramMRHLP$mData$m, 1))$piik
-      #log_piik_fik <<- zeros(modelMRHLP$n, modelMRHLP$K)
 
       for (k in 1:paramMRHLP$K) {
-        muk <- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[,,k]
+        muk <- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[, , k]
         if (paramMRHLP$variance_type == "homoskedastic") {
           sigma2k <- paramMRHLP$sigma2
-        }else{
-          sigma2k <- paramMRHLP$sigma2[,,k]
-
+        } else {
+          sigma2k <- paramMRHLP$sigma2[, , k]
         }
 
         z <- ((paramMRHLP$mData$Y - muk) %*% solve(sigma2k)) * (paramMRHLP$mData$Y - muk)
 
         mahalanobis <- matrix(rowSums(z))
 
-        denom <- (2*pi)^(paramMRHLP$mData$d/2) * (det(as.matrix(sigma2k))) ^ 0.5
+        denom <- (2 * pi) ^ (paramMRHLP$mData$d / 2) * (det(as.matrix(sigma2k))) ^ 0.5
 
-        log_piik_fik[,k] <<- log(piik[,k]) - ones(paramMRHLP$mData$m, 1) %*% log(denom) - 0.5 * mahalanobis
+        log_piik_fik[, k] <<- log(piik[, k]) - ones(paramMRHLP$mData$m, 1) %*% log(denom) - 0.5 * mahalanobis
       }
 
       log_piik_fik <<- pmax(log_piik_fik, log(.Machine$double.xmin))
       piik_fik <- exp(log_piik_fik)
       log_sum_piik_fik <<- matrix(log(rowSums(piik_fik)))
 
-      log_tauik <- log_piik_fik - log_sum_piik_fik %*% ones(1,paramMRHLP$K)
-      tik <<- normalize(exp(log_tauik),2)$M
+      log_tauik <- log_piik_fik - log_sum_piik_fik %*% ones(1, paramMRHLP$K)
+      tik <<- normalize(exp(log_tauik), 2)$M
     }
   )
 )
-
-

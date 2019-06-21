@@ -38,10 +38,10 @@ ParamMRHLP <- setRefClass(
 
     W = "matrix",
     beta = "array",
-    sigma2 = "array"),
+    sigma2 = "array"
+  ),
   methods = list(
     initialize = function(mData = MData(numeric(1), matrix(1)), K = 1, p = 3, q = 1, variance_type = "heteroskedastic") {
-
       mData <<- mData
 
       phi <<- designmatrix(x = mData$X, p = p, q = q)
@@ -61,15 +61,10 @@ ParamMRHLP <- setRefClass(
       beta <<- array(NA, dim = c(p + 1, mData$d, K))
       if (variance_type == "homoskedastic") {
         sigma2 <<- matrix(NA, mData$d, mData$d)
-      }
-      else{
+      } else {
         sigma2 <<- array(NA, dim = c(mData$d, mData$d, K))
       }
     },
-
-
-
-
 
     initParam = function(try_algo = 1) {
       "Method to initialize parameters \\code{W}, \\code{beta} and
@@ -80,11 +75,10 @@ ParamMRHLP <- setRefClass(
       the response Y. Otherwise, \\code{W}, \\code{beta} and \\code{sigma2} are
       initialized by segmenting randomly into \\code{K} segments the response Y."
 
-      n <- nrow(phi$XBeta) # m
-      m <- ncol(phi$XBeta) # P
+      n <- nrow(phi$XBeta)
+      m <- ncol(phi$XBeta)
 
-      if (try_algo == 1) {
-        # uniform segmentation into K contiguous segments, and then a regression
+      if (try_algo == 1) { # Uniform segmentation into K contiguous segments, and then a regression
         zi <- round(n / K) - 1
 
         s <- 0
@@ -93,8 +87,8 @@ ParamMRHLP <- setRefClass(
           i <- (k - 1) * zi + 1
           j <- k * zi
 
-          yk <- mData$Y[i:j, ]
-          Xk <- as.matrix(phi$XBeta[i:j, ])
+          yk <- mData$Y[i:j,]
+          Xk <- as.matrix(phi$XBeta[i:j,])
 
           beta[, , k] <<- solve(t(Xk) %*% Xk) %*% t(Xk) %*% yk
 
@@ -103,22 +97,18 @@ ParamMRHLP <- setRefClass(
           if (variance_type == "homoskedastic") {
             s <- s + sk
             sigma2 <<- s / n
-          }
-          else{
+          } else{
             sigma2[, , k] <<- sk / length(yk)
           }
         }
 
       }
-      else{
-        # random segmentation into contiguous segments, and then a regression
-        Lmin <- m + 1 #round(m/K) #nbr pts min into one segment
+      else{# Random segmentation into K contiguous segments, and then a regression
+        Lmin <- m + 1 # Minimum number of points in a segment
         tk_init <- zeros(K, 1)
         K_1 <- K
         for (k in 2:K) {
           K_1 <- K_1 - 1
-
-          #temp <- (tk_init[k-1] + Lmin) : (m - (K_1*Lmin))
 
           temp <- tk_init[k - 1] + Lmin:(n - (K_1 * Lmin) - tk_init[k - 1])
 
@@ -133,9 +123,8 @@ ParamMRHLP <- setRefClass(
           i <- tk_init[k] + 1
           j <- tk_init[k + 1]
 
-          yk <- mData$Y[i:j, ]
-          Xk <- phi$XBeta[i:j, ]
-
+          yk <- mData$Y[i:j,]
+          Xk <- phi$XBeta[i:j,]
 
           beta[, , k] <<- solve(t(Xk) %*% Xk) %*% t(Xk) %*% yk
 
@@ -161,15 +150,11 @@ ParamMRHLP <- setRefClass(
         s = 0
       }
       for (k in 1:K) {
-        weights <- statMRHLP$tik[, k]
-        # post prob of each component k (dimension nx1)
-        nk <- sum(weights)
-        # expected cardinal numnber of class k
+        weights <- statMRHLP$tik[, k] # Post probabilities of each component k (dimension nx1)
+        nk <- sum(weights) # Expected cardinal numnber of class k
 
-        Xk <- phi$XBeta * (sqrt(weights) %*% ones(1, p + 1))
-        #[m*(p+1)]
+        Xk <- phi$XBeta * (sqrt(weights) %*% ones(1, p + 1)) # [m*(p+1)]
         yk <- mData$Y * (sqrt(weights) %*% ones(1, mData$d))
-        # dimension :(nx1).*(nx1) = (nx1)
 
         M <- t(Xk) %*% Xk
         epps <- 1e-9
@@ -177,20 +162,19 @@ ParamMRHLP <- setRefClass(
 
         beta[, , k] <<- solve(M) %*% t(Xk) %*% yk # Maximization w.r.t betak
         z <- (mData$Y - phi$XBeta %*% beta[, , k]) * (sqrt(weights) %*% ones(1, mData$d))
-        # Maximisation w.r.t sigmak (the variances)
 
+        # Maximisation w.r.t sigmak (the variances)
         sk <- t(z) %*% z
+
         if (variance_type == "homoskedastic") {
           s <- s + sk
-
           sigma2 <<- s / mData$m
-        } else{
+        } else {
           sigma2[, , k] <<- sk / nk
         }
       }
 
       # Maximization w.r.t W
-      # ----------------------------------%
       #  IRLS : Iteratively Reweighted Least Squares (for IRLS, see the IJCNN 2009 paper)
       res_irls <- IRLS(phi$Xw, statMRHLP$tik, ones(nrow(statMRHLP$tik), 1), W, verbose_IRLS)
 
