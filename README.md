@@ -50,7 +50,7 @@ q <- 1 # Dimension of w (order of the logistic regression: to be set to 1 for se
 variance_type <- "heteroskedastic" # "heteroskedastic" or "homoskedastic" model
 
 n_tries <- 1
-max_iter = 1500
+max_iter <- 1500
 threshold <- 1e-6
 verbose <- TRUE
 verbose_IRLS <- FALSE

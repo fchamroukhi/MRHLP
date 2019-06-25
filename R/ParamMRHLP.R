@@ -52,9 +52,9 @@ ParamMRHLP <- setRefClass(
       variance_type <<- variance_type
 
       if (variance_type == "homoskedastic") {
-        nu <<- (q + 1) * (K - 1) + K * (p + 1) * mData$d + mData$d * (mData$d + 1) / 2
+        nu <<- (q + 1) * (K - 1) + mData$d * (p + 1) * K + mData$d * (mData$d + 1) / 2
       } else {
-        nu <<- (q + 1) * (K - 1) + K * (p + 1) * mData$d + K * mData$d * (mData$d + 1) / 2
+        nu <<- (q + 1) * (K - 1) + mData$d * (p + 1) * K + K * mData$d * (mData$d + 1) / 2
       }
 
       W <<- matrix(0, q + 1, K - 1)
@@ -150,7 +150,7 @@ ParamMRHLP <- setRefClass(
         s = 0
       }
       for (k in 1:K) {
-        weights <- statMRHLP$tik[, k] # Post probabilities of each component k (dimension nx1)
+        weights <- statMRHLP$tau_ik[, k] # Post probabilities of each component k (dimension nx1)
         nk <- sum(weights) # Expected cardinal numnber of class k
 
         Xk <- phi$XBeta * (sqrt(weights) %*% ones(1, p + 1)) # [m*(p+1)]
@@ -176,7 +176,7 @@ ParamMRHLP <- setRefClass(
 
       # Maximization w.r.t W
       #  IRLS : Iteratively Reweighted Least Squares (for IRLS, see the IJCNN 2009 paper)
-      res_irls <- IRLS(phi$Xw, statMRHLP$tik, ones(nrow(statMRHLP$tik), 1), W, verbose_IRLS)
+      res_irls <- IRLS(phi$Xw, statMRHLP$tau_ik, ones(nrow(statMRHLP$tau_ik), 1), W, verbose_IRLS)
 
       W <<- res_irls$W
       piik <- res_irls$piik

@@ -40,10 +40,10 @@ ModelMRHLP <- setRefClass(
         }
 
         # Probablities of the hidden process (segmentation)
-        plot.default(paramMRHLP$mData$X, statMRHLP$piik[, 1], type = "l", xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)), col = colorsvec[1], lwd = 1.5)
+        plot.default(paramMRHLP$mData$X, statMRHLP$pi_ik[, 1], type = "l", xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)), col = colorsvec[1], lwd = 1.5)
         if (paramMRHLP$K > 1) {
           for (k in 2:paramMRHLP$K) {
-            lines(paramMRHLP$mData$X, statMRHLP$piik[, k], col = colorsvec[k], lwd = 1.5, ylim = c(0, 1))
+            lines(paramMRHLP$mData$X, statMRHLP$pi_ik[, k], col = colorsvec[k], lwd = 1.5, ylim = c(0, 1))
           }
         }
       }
@@ -92,7 +92,7 @@ ModelMRHLP <- setRefClass(
       cat("\n")
       cat("\n")
 
-      tab <- data.frame("log-likelihood" = statMRHLP$log_lik, "nu" = paramMRHLP$nu,
+      tab <- data.frame("log-likelihood" = statMRHLP$loglik, "nu" = paramMRHLP$nu,
                    "AIC" = statMRHLP$AIC,"BIC" = statMRHLP$BIC, "ICL" = statMRHLP$ICL,
                    row.names = "", check.names = FALSE)
       print(tab, digits = digits)

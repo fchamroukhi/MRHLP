@@ -78,43 +78,43 @@ emMRHLP <- function(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic", 
 
         iter <- iter + 1
         if (verbose) {
-          cat(paste0("EM: Iteration : ", iter, " || log-likelihood : ", stat$log_lik, "\n"))
+          cat(paste0("EM: Iteration : ", iter, " || log-likelihood : ", stat$loglik, "\n"))
         }
-        if (prev_loglik - stat$log_lik > 1e-5) {
-          warning(paste0("EM log-likelihood is decreasing from ", prev_loglik, "to ", stat$log_lik, " !"))
+        if (prev_loglik - stat$loglik > 1e-5) {
+          warning(paste0("EM log-likelihood is decreasing from ", prev_loglik, "to ", stat$loglik, " !"))
           top <- top + 1
           if (top > 20)
             break
         }
 
         # Test of convergence
-        converge <- abs((stat$log_lik - prev_loglik) / prev_loglik) <= threshold
+        converge <- abs((stat$loglik - prev_loglik) / prev_loglik) <= threshold
         if (is.na(converge)) {
           converge <-
             FALSE
         } # Basically for the first iteration when prev_loglik is Inf
 
-        prev_loglik <- stat$log_lik
-        stat$stored_loglik[iter] <- stat$log_lik
+        prev_loglik <- stat$loglik
+        stat$stored_loglik[iter] <- stat$loglik
       } # End of the EM loop
 
       cpu_time_all[try_EM] <- Sys.time() - time
 
-      if (stat$log_lik > best_loglik) {
+      if (stat$loglik > best_loglik) {
         statSolution <- stat$copy()
         paramSolution <- param$copy()
         if (param$K == 1) {
-          statSolution$tik <- matrix(stat$tik, nrow = param$mData$m, ncol = 1)
-          statSolution$piik <- matrix(stat$piik, nrow = param$mData$m, ncol = 1)
+          statSolution$tau_ik <- matrix(stat$tau_ik, nrow = param$mData$m, ncol = 1)
+          statSolution$pi_ik <- matrix(stat$pi_ik, nrow = param$mData$m, ncol = 1)
         } else {
-          statSolution$tik <- stat$tik[1:param$mData$m,]
-          statSolution$piik <- stat$piik[1:param$mData$m,]
+          statSolution$tau_ik <- stat$tau_ik[1:param$mData$m,]
+          statSolution$pi_ik <- stat$pi_ik[1:param$mData$m,]
         }
 
-        best_loglik <- stat$log_lik
+        best_loglik <- stat$loglik
       }
       if (n_tries > 1) {
-        cat(paste0("Max value of the log-likelihood: ", stat$log_lik, "\n"))
+        cat(paste0("Max value of the log-likelihood: ", stat$loglik, "\n"))
       }
     }
 
@@ -122,7 +122,7 @@ emMRHLP <- function(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic", 
     statSolution$MAP()
 
     if (n_tries > 1) {
-      cat(paste0("Max value of the log-likelihood: ", statSolution$log_lik, "\n"))
+      cat(paste0("Max value of the log-likelihood: ", statSolution$loglik, "\n"))
     }
 
 

@@ -54,7 +54,7 @@ variance_type <- "heteroskedastic" # "heteroskedastic" or "homoskedastic" model
 
 ```{r}
 n_tries <- 1
-max_iter = 1500
+max_iter <- 1500
 threshold <- 1e-6
 verbose <- TRUE
 verbose_IRLS <- FALSE
