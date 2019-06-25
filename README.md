@@ -42,7 +42,7 @@ browseVignettes("MRHLP")
 ``` r
 library(MRHLP)
 
-data("simulatedtimeseries")
+data("toydataset")
 
 K <- 5 # Number of regimes (mixture components)
 p <- 3 # Dimension of beta (order of the polynomial regressors)
@@ -55,11 +55,8 @@ threshold <- 1e-6
 verbose <- TRUE
 verbose_IRLS <- FALSE
 
-mrhlp <- emMRHLP(simulatedtimeseries$X, simulatedtimeseries[,2:ncol(simulatedtimeseries)], 
-                 K, p, q, variance_type, n_tries, max_iter, threshold, verbose,
-                 verbose_IRLS)
-#> EM try number: 1
-#> 
+mrhlp <- emMRHLP(toydataset$x, toydataset[,c("y1", "y2", "y3")], K, p, q, 
+                 variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 #> EM: Iteration : 1 || log-likelihood : -4975.54177550763
 #> EM: Iteration : 2 || log-likelihood : -3108.34368262058
 #> EM: Iteration : 3 || log-likelihood : -3083.1752428408

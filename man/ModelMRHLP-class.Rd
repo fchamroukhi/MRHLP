@@ -6,17 +6,35 @@
 \alias{ModelMRHLP}
 \title{A Reference Class which represents a fitted MRHLP model.}
 \description{
-ModelMRHLP represents a \link[=ModelMRHLP]{MRHLP} model for which parameters have
-been estimated.
+ModelMRHLP represents an estimated MRHLP model.
 }
 \section{Fields}{
 
 \describe{
-\item{\code{paramMRHLP}}{A \link{ParamMRHLP} object. It contains the estimated values of the parameters.}
+\item{\code{paramMRHLP}}{A \link{ParamMRHLP} object. It contains the
+estimated values of the parameters.}
 
-\item{\code{statMRHLP}}{A \link{StatMRHLP} object. It contains all the statistics associated to the MRHLP model.}
+\item{\code{statMRHLP}}{A \link{StatMRHLP} object. It contains all the
+statistics associated to the MRHLP model.}
 }}
 
+\section{Methods}{
+
+\describe{
+\item{\code{plot(what = c("regressors", "estimatedsignal"))}}{Plot method.
+\describe{
+  \item{\code{what}}{The type of graph requested:
+    \itemize{
+      \item \code{"regressors" = } Polynomial regression components.
+      \item \code{"estimatedsignal" = } Estimated signal (Sum of the
+      polynomial components weighted by the logistic probabilities.
+    }
+  }
+}
+By default, all the above graphs are produced.}
+
+\item{\code{summary()}}{Summary method.}
+}}
 
 \seealso{
 \link{ParamMRHLP}, \link{StatMRHLP}

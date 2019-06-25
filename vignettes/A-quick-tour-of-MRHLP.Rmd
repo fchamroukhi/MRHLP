@@ -37,8 +37,7 @@ See `help(package="MRHLP")` for further details and references provided by `cita
 # Load simulated data
 
 ```{r}
-rm(list = ls())
-data("simulatedtimeseries")
+data("toydataset")
 ```
 
 ## Set up MRHLP model parameters
@@ -64,9 +63,8 @@ verbose_IRLS <- FALSE
 ## Estimation
 
 ```{r}
-mrhlp <- emMRHLP(simulatedtimeseries$X, simulatedtimeseries[,2:ncol(simulatedtimeseries)], 
-                    K, p, q, variance_type, n_tries, max_iter, threshold, 
-                    verbose, verbose_IRLS)
+mrhlp <- emMRHLP(toydataset$x, toydataset[,c("y1", "y2", "y3")], K, p, q, 
+                 variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
 ```
 
 ## Summary
@@ -83,8 +81,8 @@ mrhlp$summary()
 mrhlp$plot(what = "regressors")
 ```
 
-## Mean curve
+## Estimated signal
 
 ```{r}
-mrhlp$plot(what = "meancurve")
+mrhlp$plot(what = "estimatedsignal")
 ```

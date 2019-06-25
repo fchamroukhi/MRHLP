@@ -11,8 +11,9 @@ selectMRHLP(X, Y, Kmin = 1, Kmax = 10, pmin = 0, pmax = 4,
 \item{X}{Numeric vector of length \emph{m} representing the covariates/inputs
 \eqn{x_{1},\dots,x_{m}}.}
 
-\item{Y}{Numeric vector of length \emph{m} representing the observed
-response/output \eqn{y_{1},\dots,y_{m}}.}
+\item{Y}{Matrix of size \eqn{(m, d)} representing a \eqn{d} dimension
+function of \code{X} observed at points \eqn{1,\dots,m}. \code{Y} is the
+observed/response output.}
 
 \item{Kmin}{The minimum number of regimes (MRHLP components).}
 
@@ -35,8 +36,9 @@ selectMRHLP implements the model selection procedure.
 selectMRHLP implements the model selection. This function runs every
 MRHLP model by varying the number of regimes \code{K} from \code{Kmin} to \code{Kmax} and
 the order of the polynomial regression \code{p} from \code{pmin} to \code{pmax}. The model
-having the highest value of the chosen selection criterion is then selected.
+having the highest value of the chosen selection criterion is then
+selected.
 }
 \seealso{
-\link{ModelRHLP}
+\link{ModelMRHLP}
 }

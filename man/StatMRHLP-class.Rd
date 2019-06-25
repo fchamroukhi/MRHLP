@@ -6,66 +6,68 @@
 \alias{StatMRHLP}
 \title{A Reference Class which contains statistics of a MRHLP model.}
 \description{
-StatMRHLP contains all the parameters of a \link[=ParamMRHLP]{MRHLP} model.
+StatMRHLP contains all the statistics associated to a \link[=ParamMRHLP]{MRHLP}
+model.
 }
 \section{Fields}{
 
 \describe{
-\item{\code{piik}}{Matrix of size \eqn{(n, K)} representing the probabilities
-\eqn{P(zi = k; W) = P(z_{ik} = 1; W)}{P(zi = k; W) = P(z_ik = 1; W)} of the
-latent variable \eqn{zi,\ i = 1,\dots,m}{zi, i = 1,\dots,n}.}
+\item{\code{pi_ik}}{Matrix of size \eqn{(m, K)} representing the prior/logistic
+probabilities \eqn{\pi_{k}(x_{i}; \boldsymbol{\Psi}) = P(z_{i} = k |
+  \boldsymbol{x}; \Psi)}{\pi_{k}(x_{i}; \Psi) = P(z_{i} = k | x; \Psi)} of
+the latent variable \eqn{z_{i}, i = 1,\dots,m}.}
 
-\item{\code{z_ik}}{Hard segmentation logical matrix of dimension \eqn{(n, K)}
-obtained by the Maximum a posteriori (MAP) rule:
-\eqn{z_{ik} = 1 \ \textrm{if} \ z_{ik} = \textrm{arg} \ \textrm{max}_{k} \
-P(z_i = k | Y, W, \beta);\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik =
-arg max_k P(z_i = k | Y, W, \beta); 0 otherwise}, \eqn{k = 1,\dots,K}.}
+\item{\code{z_ik}}{Hard segmentation logical matrix of dimension \eqn{(m, K)}
+obtained by the Maximum a posteriori (MAP) rule: \eqn{z\_ik = 1 \
+  \textrm{if} \ z\_ik = \textrm{arg} \ \textrm{max}_{k} \ \pi_{k}(x_{i};
+  \boldsymbol{\Psi});\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik = arg max_k
+  \pi_{k}(x_{i}; \Psi); 0 otherwise}, \eqn{k = 1,\dots,K}.}
 
 \item{\code{klas}}{Column matrix of the labels issued from \code{z_ik}. Its elements are
 \eqn{klas(i) = k}, \eqn{k = 1,\dots,K}.}
 
-\item{\code{Ex}}{Column matrix of dimension \emph{n}. \code{Ex} is the curve expectation
-: sum of the polynomial components \eqn{\beta_{k} \times X_{i}}{\betak x X_i}
-weighted by the logistic probabilities \code{pi_ik}:
-\eqn{Ey(i) = \sum_{k = 1}^{K} pi_ik \times \beta_{k} \times X_{i}}{Ey(i) =
-\sum_{k=1}^K pi_ik x \betak x X_i}, \eqn{i = 1,\dots,n}.}
+\item{\code{tau_ik}}{Matrix of size \eqn{(m, K)} giving the posterior probability
+that the observation \eqn{Y_{i}} originates from the \eqn{k}-th regression
+model.}
 
-\item{\code{log\_lik}}{Numeric. Log-likelihood of the MRHLP model.}
+\item{\code{polynomials}}{Array of size \eqn{(m, d, K)} giving the values of the
+estimated polynomial regression components.}
 
-\item{\code{com_loglik}}{Numeric. Complete log-likelihood of the MRHLP model.}
+\item{\code{weighted_polynomials}}{Array of size \eqn{(m, d, K)} giving the values
+of the estimated polynomial regression components weighted by the prior
+probabilities \code{pi_ik}.}
+
+\item{\code{Ex}}{Matrix of size \emph{(m, d)}. \code{Ex} is the curve expectation
+(estimated signal): sum of the polynomial components weighted by the
+logistic probabilities \code{pi_ik}.}
+
+\item{\code{loglik}}{Numeric. Observed-data log-likelihood of the MRHLP model.}
+
+\item{\code{com_loglik}}{Numeric. Complete-data log-likelihood of the MRHLP model.}
 
 \item{\code{stored_loglik}}{List. Stored values of the log-likelihood at each EM
 iteration.}
 
-\item{\code{BIC}}{Numeric. Value of the BIC (Bayesian Information Criterion)
-criterion. The formula is \eqn{BIC = log\_lik - nu \times
-\textrm{log}(n) / 2}{BIC = log\_lik - nu x log(n) / 2} with \emph{nu} the
-degree of freedom of the MRHLP model.}
+\item{\code{stored_com_loglik}}{List. Stored values of the Complete log-likelihood
+at each EM iteration.}
 
-\item{\code{ICL}}{Numeric. Value of the ICL (Integrated Completed Likelihood)
-criterion. The formula is \eqn{ICL = com\_loglik - nu \times
-\textrm{log}(n) / 2}{ICL = com_loglik - nu x log(n) / 2} with \emph{nu} the
-degree of freedom of the MRHLP model.}
+\item{\code{BIC}}{Numeric. Value of BIC (Bayesian Information Criterion).}
 
-\item{\code{AIC}}{Numeric. Value of the AIC (Akaike Information Criterion)
-criterion. The formula is \eqn{AIC = log\_lik - nu}{AIC = log\_lik - nu}.}
+\item{\code{ICL}}{Numeric. Value of ICL (Integrated Completed Likelihood).}
 
-\item{\code{cpu_time}}{Numeric. Average executon time of a EM step.}
+\item{\code{AIC}}{Numeric. Value of AIC (Akaike Information Criterion).}
 
-\item{\code{log_piik_fik}}{Matrix of size \eqn{(n, K)} giving the values of the
-logarithm of the joint probability
-\eqn{P(Y_{i}, \ zi = k)}{P(Yi, zi = k)}, \eqn{i = 1,\dots,n}.}
+\item{\code{log_piik_fik}}{Matrix of size \eqn{(m, K)} giving the values of the
+logarithm of the joint probability \eqn{P(y_{i}, \ z_{i} = k |
+  \boldsymbol{x}, \boldsymbol{\Psi})}{P(y_{i}, z_{i} = k | x, \Psi)}, \eqn{i
+  = 1,\dots,m}.}
 
-\item{\code{log_sum_piik_fik}}{Column matrix of size \emph{n} giving the values of
-\eqn{\sum_{k = 1}^{K} \textrm{log} P(Y_{i}, \ zi = k)}{\sum_{k = 1}^{K} log
-P(Yi, zi = k)}, \eqn{i = 1,\dots,n}.}
+\item{\code{log_sum_piik_fik}}{Column matrix of size \emph{m} giving the values of
+\eqn{\textrm{log} \sum_{k = 1}^{K} P(y_{i}, \ z_{i} = k | \boldsymbol{x},
+  \boldsymbol{\Psi})}{log \sum_{k = 1}^{K} P(y_{i}, z_{i} = k | x, \Psi)},
+\eqn{i = 1,\dots,m}.}
 
-\item{\code{tik}}{Matrix of size \eqn{(n, K)} giving the posterior probability that
-\eqn{Y_{i}}{Yi} originates from the \eqn{k}-th regression model
-\eqn{P(zi = k | Y, W, \beta)}.}
-
-\item{\code{polynomials}}{Matrix of size \eqn{(n, K)} giving the values of
-\eqn{\beta_{k} \times X_{i}}{\betak x X_i}, \eqn{i = 1,\dots,n}.}
+\item{\code{cpu_time}}{Numeric. Average computing time of a EM algorithm run.}
 }}
 
 \section{Methods}{
@@ -90,5 +92,5 @@ appartient la classe k (au sens du MAP) et zero sinon.}
 }}
 
 \seealso{
-\link{ParamMRHLP}, \link{FData}
+\link{ParamMRHLP}
 }

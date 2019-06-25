@@ -2,27 +2,33 @@
 #'
 #' ParamMRHLP contains all the parameters of a MRHLP model.
 #'
-#' @field mData [MData][MData] object representing the sample.
-#' @field K The number of regimes (mixture components).
+#' @field mData [MData][MData] objects representing the sample
+#'   (covariates/inputs `X` and observed/response output `Y`).
+#' @field K The number of regimes (MRHLP components).
 #' @field p The order of the polynomial regression.
 #' @field q The dimension of the logistic regression. For the purpose of
-#' segmentation, it must be set to 1.
+#'   segmentation, it must be set to 1.
 #' @field variance_type Character indicating if the model is homoskedastic
-#' (`variance_type = "homoskedastic"`) or heteroskedastic
-#' (`variance_type = "heteroskedastic"`). By default the model is
-#' heteroskedastic.
-#' @field W Parameters of the logistic process.
-#' \eqn{W = w_{1},\dots,w_{K-1}}{W = (w1,\dots,wK-1)} is a matrix of dimension
-#' \eqn{(q + 1, K - 1)}, with \emph{q} the order of the logistic regression.
-#' @field beta Parameters of the polynomial regressions.
-#' \eqn{\beta = (\beta_{1},\dots,\beta_{K})}{\beta = (\beta1,\dots,\betaK)} is
-#' a matrix of dimension \eqn{(p + 1, K)}, with \emph{p} the order of the
-#' polynomial regression.
-#' @field sigma2 The variances for the \emph{K} regimes. If MRHLP model is
-#' homoskedastic (\emph{variance_type} = 1) then sigma2 is a matrix of size
-#' \eqn{(1, 1)}, else if MRHLP model is heteroskedastic then sigma2 is a matrix
-#' of size \eqn{(K, 1)}.
-#' @seealso [MData]
+#'   (`variance_type = "homoskedastic"`) or heteroskedastic (`variance_type =
+#'   "heteroskedastic"`). By default the model is heteroskedastic.
+#' @field W Parameters of the logistic process. \eqn{\boldsymbol{W} =
+#'   (\boldsymbol{w}_{1},\dots,\boldsymbol{w}_{K-1})}{W = (w_{1},\dots,w_{K-1})}
+#'   is a matrix of dimension \eqn{(q + 1, K - 1)}, with `q` the order of the
+#'   logistic regression. `q` is fixed to 1 by default.
+#' @field beta Parameters of the polynomial regressions. \eqn{\boldsymbol{\beta}
+#'   = (\boldsymbol{\beta}_{1},\dots,\boldsymbol{\beta}_{K})}{\beta =
+#'   (\beta_{1},\dots,\beta_{K})} is an array of dimension \eqn{(p + 1, d, K)},
+#'   with `p` the order of the polynomial regression. `p` is fixed to 3 by
+#'   default.
+#' @field sigma2 The variances for the `K` regimes. If MRHLP model is
+#'   heteroskedastic (`variance_type = "heteroskedastic"`) then `sigma2` is an
+#'   array of size \eqn{(d, d, K)} (otherwise MRHLP model is homoskedastic
+#'   (`variance_type = "homoskedastic"`) and `sigma2` is a matrix of size
+#'   \eqn{(d, d)}).
+#' @field nu The degree of freedom of the MRHLP model representing the
+#'   complexity of the model.
+#' @field phi A list giving the regression design matrices for the polynomial
+#'   and the logistic regressions.
 #' @export
 ParamMRHLP <- setRefClass(
   "ParamMRHLP",
@@ -71,15 +77,13 @@ ParamMRHLP <- setRefClass(
       \\code{sigma2}.
 
       If try_algo = 1 then \\code{W}, \\code{beta} and \\code{sigma2} are
-      initialized by segmenting uniformly into \\code{K} contiguous segments
-      the response Y. Otherwise, \\code{W}, \\code{beta} and \\code{sigma2} are
-      initialized by segmenting randomly into \\code{K} segments the response Y."
-
-      n <- nrow(phi$XBeta)
-      m <- ncol(phi$XBeta)
+      initialized by segmenting  the time series \\code{Y} uniformly into
+      \\code{K} contiguous segments. Otherwise, \\code{W}, \\code{beta} and
+      \\code{sigma2} are initialized by segmenting randomly the time series
+      \\code{Y} into \\code{K} segments."
 
       if (try_algo == 1) { # Uniform segmentation into K contiguous segments, and then a regression
-        zi <- round(n / K) - 1
+        zi <- round(mData$m / K) - 1
 
         s <- 0
 
@@ -96,7 +100,7 @@ ParamMRHLP <- setRefClass(
           sk <- t(yk - muk) %*% (yk - muk)
           if (variance_type == "homoskedastic") {
             s <- s + sk
-            sigma2 <<- s / n
+            sigma2 <<- s / mData$m
           } else{
             sigma2[, , k] <<- sk / length(yk)
           }
@@ -104,19 +108,19 @@ ParamMRHLP <- setRefClass(
 
       }
       else{# Random segmentation into K contiguous segments, and then a regression
-        Lmin <- m + 1 # Minimum number of points in a segment
-        tk_init <- zeros(K, 1)
+        Lmin <- 2 # Minimum number of points in a segment
+        tk_init <- zeros(K + 1, 1)
         K_1 <- K
         for (k in 2:K) {
           K_1 <- K_1 - 1
 
-          temp <- tk_init[k - 1] + Lmin:(n - (K_1 * Lmin) - tk_init[k - 1])
+          temp <- tk_init[k - 1] + Lmin:(mData$m - (K_1 * Lmin) - tk_init[k - 1])
 
           ind <- sample(length(temp))
 
           tk_init[k] <- temp[ind[1]]
         }
-        tk_init[K + 1] <- n
+        tk_init[K + 1] <- mData$m
 
         s <- 0
         for (k in 1:K) {
@@ -126,14 +130,14 @@ ParamMRHLP <- setRefClass(
           yk <- mData$Y[i:j,]
           Xk <- phi$XBeta[i:j,]
 
-          beta[, , k] <<- solve(t(Xk) %*% Xk) %*% t(Xk) %*% yk
+          beta[, , k] <<- solve(t(Xk) %*% Xk, tol = 0) %*% t(Xk) %*% yk
 
           muk <- Xk %*% beta[, , k]
           sk <- t(yk - muk) %*% (yk - muk)
 
           if (variance_type == "homoskedastic") {
             s <- s + sk
-            sigma2 <<- s / n
+            sigma2 <<- s / mData$m
           }
           else{
             sigma2[, , k] <<- sk / length(yk)
@@ -143,8 +147,9 @@ ParamMRHLP <- setRefClass(
     },
 
     MStep = function(statMRHLP, verbose_IRLS) {
-      "Method used in the EM algorithm to learn the parameters of the MRHLP model
-      based on statistics provided by \\code{statMRHLP}."
+      "Method which implements the M-step of the EM algorithm to learn the
+      parameters of the MRHLP model based on statistics provided by
+      \\code{statMRHLP} (which contains the E-step)."
       # Maximization w.r.t betak and sigmak (the variances)
       if (variance_type == "homoskedastic") {
         s = 0

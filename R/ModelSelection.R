@@ -1,22 +1,24 @@
 #' selectMRHLP implements the model selection procedure.
 #'
 #' @details selectMRHLP implements the model selection. This function runs every
-#' MRHLP model by varying the number of regimes `K` from `Kmin` to `Kmax` and
-#' the order of the polynomial regression `p` from `pmin` to `pmax`. The model
-#' having the highest value of the chosen selection criterion is then selected.
+#'   MRHLP model by varying the number of regimes `K` from `Kmin` to `Kmax` and
+#'   the order of the polynomial regression `p` from `pmin` to `pmax`. The model
+#'   having the highest value of the chosen selection criterion is then
+#'   selected.
 #'
 #' @param X Numeric vector of length \emph{m} representing the covariates/inputs
-#' \eqn{x_{1},\dots,x_{m}}.
-#' @param Y Numeric vector of length \emph{m} representing the observed
-#' response/output \eqn{y_{1},\dots,y_{m}}.
+#'   \eqn{x_{1},\dots,x_{m}}.
+#' @param Y Matrix of size \eqn{(m, d)} representing a \eqn{d} dimension
+#'   function of `X` observed at points \eqn{1,\dots,m}. `Y` is the
+#'   observed/response output.
 #' @param Kmin The minimum number of regimes (MRHLP components).
 #' @param Kmax The maximum number of regimes (MRHLP components).
 #' @param pmin The minimum order of the polynomial regression.
 #' @param pmax The maximum order of the polynomial regression.
 #' @param criterion The criterion used to select the MRHLP model ("BIC", "AIC").
 #' @return selectMRHLP returns an object of class [ModelMRHLP][ModelMRHLP]
-#' representing the selected MRHLP model according to the chosen `criterion`.
-#' @seealso [ModelRHLP]
+#'   representing the selected MRHLP model according to the chosen `criterion`.
+#' @seealso [ModelMRHLP]
 #' @export
 selectMRHLP <- function(X, Y, Kmin = 1, Kmax = 10, pmin = 0, pmax = 4, criterion = c("BIC", "AIC")) {
 

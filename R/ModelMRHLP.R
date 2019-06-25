@@ -1,11 +1,11 @@
 #' A Reference Class which represents a fitted MRHLP model.
 #'
-#' ModelMRHLP represents a [MRHLP][ModelMRHLP] model for which parameters have
-#' been estimated.
+#' ModelMRHLP represents an estimated MRHLP model.
 #'
-#' @usage NULL
-#' @field paramMRHLP A [ParamMRHLP][ParamMRHLP] object. It contains the estimated values of the parameters.
-#' @field statMRHLP A [StatMRHLP][StatMRHLP] object. It contains all the statistics associated to the MRHLP model.
+#' @field paramMRHLP A [ParamMRHLP][ParamMRHLP] object. It contains the
+#'   estimated values of the parameters.
+#' @field statMRHLP A [StatMRHLP][StatMRHLP] object. It contains all the
+#'   statistics associated to the MRHLP model.
 #' @seealso [ParamMRHLP], [StatMRHLP]
 #' @export
 ModelMRHLP <- setRefClass(
@@ -16,7 +16,19 @@ ModelMRHLP <- setRefClass(
   ),
   methods = list(
 
-    plot = function(what = c("regressors", "meancurve")) {
+    plot = function(what = c("regressors", "estimatedsignal")) {
+      "Plot method.
+      \\describe{
+        \\item{\\code{what}}{The type of graph requested:
+          \\itemize{
+            \\item \\code{\"regressors\" = } Polynomial regression components.
+            \\item \\code{\"estimatedsignal\" = } Estimated signal (Sum of the
+            polynomial components weighted by the logistic probabilities.
+          }
+        }
+      }
+      By default, all the above graphs are produced."
+
       what <- match.arg(what, several.ok = TRUE)
 
       oldpar <- par()[c("mfrow", "mai", "mgp")]
@@ -48,7 +60,7 @@ ModelMRHLP <- setRefClass(
         }
       }
 
-      if (any(what == "meancurve")) {
+      if (any(what == "estimatedsignal")) {
         # Data, regression model, and segmentation
         par(mfrow = c(2, 1), mai = c(0.6, 1, 0.5, 0.5), mgp = c(2, 1, 0))
         matplot(paramMRHLP$mData$X, paramMRHLP$mData$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y", col = gray.colors(paramMRHLP$mData$d), lty = 1)
@@ -74,6 +86,8 @@ ModelMRHLP <- setRefClass(
     },
 
     summary = function() {
+      "Summary method."
+
       digits = getOption("digits")
 
       title <- paste("Fitted MRHLP model")

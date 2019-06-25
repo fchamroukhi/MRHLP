@@ -6,7 +6,7 @@
 #'
 #' @field X Numeric vector of length \emph{n}.
 #' @field Y Matrix of size \eqn{(m, d)} representing a \eqn{d} dimension
-#' function of `X` observed at points \eqn{1,\dots,m}.
+#'   function of `X` observed at points \eqn{1,\dots,m}.
 #' @export
 MData <- setRefClass(
   "MData",

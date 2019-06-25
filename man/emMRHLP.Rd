@@ -4,47 +4,51 @@
 \alias{emMRHLP}
 \title{emMRHLP is used to fit a MRHLP model.}
 \usage{
-emMRHLP(X, Y, K, p, q = 1, variance_type = c("heteroskedastic",
+emMRHLP(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic",
   "homoskedastic"), n_tries = 1, max_iter = 1500, threshold = 1e-06,
   verbose = FALSE, verbose_IRLS = FALSE)
 }
 \arguments{
-\item{X}{Numeric vector of length \emph{m} representing the covariates.}
+\item{X}{Numeric vector of length \emph{m} representing the covariates/inputs
+\eqn{x_{1},\dots,x_{m}}.}
 
-\item{Y}{Matrix of size \eqn{(n, m)} representing \emph{n} functions of \code{X}
-observed at points \eqn{1,\dots,m}.}
+\item{Y}{Matrix of size \eqn{(m, d)} representing a \eqn{d} dimension
+function of \code{X} observed at points \eqn{1,\dots,m}. \code{Y} is the
+observed/response output.}
 
-\item{K}{The number of regimes (mixture components).}
+\item{K}{The number of regimes (MRHLP components).}
 
-\item{p}{The order of the polynomial regression.}
+\item{p}{Optional. The order of the polynomial regression. By default, \code{p} is
+set at 3.}
 
-\item{q}{The dimension of the logistic regression. For the purpose of
-segmentation, it must be set to 1.}
+\item{q}{Optional. The dimension of the logistic regression. For the purpose
+of segmentation, it must be set to 1 (which is the default value).}
 
 \item{variance_type}{Optional character indicating if the model is
 "homoskedastic" or "heteroskedastic". By default the model is
 "heteroskedastic".}
 
-\item{n_tries}{Number of times EM algorithm will be launched.
-The solution providing the highest log-likelihood will be returned.
+\item{n_tries}{Optional. Number of runs of the EM algorithm. The solution
+providing the highest log-likelihood will be returned.
 
-If \code{n_tries} > 1, then for the first pass, parameters are initialized
-by uniformly segmenting the data into K segments, and for the next passes,
-parameters are initialized by randomly segmenting the data into K contiguous
-segments.}
+If \code{n_tries} > 1, then for the first run, parameters are initialized by
+uniformly segmenting the data into K segments, and for the next runs,
+parameters are initialized by randomly segmenting the data into K
+contiguous segments.}
 
-\item{max_iter}{The maximum number of iterations for the EM algorithm.}
-
-\item{threshold}{A numeric value specifying the threshold for the relative
-difference of log-likelihood between two steps  of the EM as stopping
-criteria.}
-
-\item{verbose}{A logical value indicating whether values of the
-log-likelihood should be printed during EM iterations.}
-
-\item{verbose_IRLS}{A logical value indicating whether values of the
-criterion optimized by IRLS should be printed at each step of the EM
+\item{max_iter}{Optional. The maximum number of iterations for the EM
 algorithm.}
+
+\item{threshold}{Optional. A numeric value specifying the threshold for the
+relative difference of log-likelihood between two steps of the EM as
+stopping criteria.}
+
+\item{verbose}{Optional. A logical value indicating whether or not values of
+the log-likelihood should be printed during EM iterations.}
+
+\item{verbose_IRLS}{Optional. A logical value indicating whether or not
+values of the criterion optimized by IRLS should be printed at each step of
+the EM algorithm.}
 }
 \value{
 EM returns an object of class \link{ModelMRHLP}.
@@ -54,13 +58,13 @@ emMRHLP is used to fit a MRHLP model. The estimation method is performed by
 the Expectation-Maximization algorithm.
 }
 \details{
-emMRHLP function is based on the EM algorithm. This functions starts
+emMRHLP function implements the EM algorithm. This function starts
 with an initialization of the parameters done by the method \code{initParam} of
-the class \link{ParamMRHLP}, then it alternates between a E-Step
-(method of the class \link{StatMRHLP}) and a M-Step (method of the class
-\link{ParamMRHLP}) until convergence (until the absolute difference of
-log-likelihood between two steps of the EM algorithm is less than the
-\code{threshold} parameter).
+the class \link{ParamMRHLP}, then it alternates between the E-Step
+(method of the class \link{StatMRHLP}) and the M-Step (method of the
+class \link{ParamMRHLP}) until convergence (until the relative
+variation of log-likelihood between two steps of the EM algorithm is less
+than the \code{threshold} parameter).
 }
 \seealso{
 \link{ModelMRHLP}, \link{ParamMRHLP}, \link{StatMRHLP}
