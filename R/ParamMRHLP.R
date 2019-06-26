@@ -2,8 +2,8 @@
 #'
 #' ParamMRHLP contains all the parameters of a MRHLP model.
 #'
-#' @field mData [MData][MData] objects representing the sample
-#'   (covariates/inputs `X` and observed/response output `Y`).
+#' @field mData [MData][MData] object representing the sample
+#'   (covariates/inputs `X` and observed responses/outputs `Y`).
 #' @field K The number of regimes (MRHLP components).
 #' @field p The order of the polynomial regression.
 #' @field q The dimension of the logistic regression. For the purpose of
@@ -76,13 +76,17 @@ ParamMRHLP <- setRefClass(
       "Method to initialize parameters \\code{W}, \\code{beta} and
       \\code{sigma2}.
 
-      If try_algo = 1 then \\code{W}, \\code{beta} and \\code{sigma2} are
+      If \\code{try_algo = 1} then \\code{beta} and \\code{sigma2} are
       initialized by segmenting  the time series \\code{Y} uniformly into
       \\code{K} contiguous segments. Otherwise, \\code{W}, \\code{beta} and
       \\code{sigma2} are initialized by segmenting randomly the time series
       \\code{Y} into \\code{K} segments."
 
       if (try_algo == 1) { # Uniform segmentation into K contiguous segments, and then a regression
+
+        # Initialization of W
+        W <<- zeros(q + 1, K - 1)
+
         zi <- round(mData$m / K) - 1
 
         s <- 0
@@ -108,6 +112,10 @@ ParamMRHLP <- setRefClass(
 
       }
       else{# Random segmentation into K contiguous segments, and then a regression
+
+        # Initialization of W
+        W <<- rand(q + 1, K - 1)
+
         Lmin <- 2 # Minimum number of points in a segment
         tk_init <- zeros(K + 1, 1)
         K_1 <- K

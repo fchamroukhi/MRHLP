@@ -88,21 +88,12 @@ StatMRHLP <- setRefClass(
     },
 
     MAP = function() {
-      "
-      calcule une partition d'un echantillon par la regle du Maximum A Posteriori a partir des probabilites a posteriori
-      Entrees : post_probas , Matrice de dimensions [n x K] des probabibiltes a posteriori (matrice de la partition floue)
-      n : taille de l'echantillon
-      K : nombres de classes
-      klas(i) = arg   max (post_probas(i,k)) , for all i=1,...,n
-      1<=k<=K
-      = arg   max  p(zi=k|xi;theta)
-      1<=k<=K
-      = arg   max  p(zi=k;theta)p(xi|zi=k;theta)/sum{l=1}^{K}p(zi=l;theta) p(xi|zi=l;theta)
-      1<=k<=K
-      Sorties : classes : vecteur collones contenant les classe (1:K)
-      Z : Matrice de dimension [nxK] de la partition dure : ses elements sont zik, avec zik=1 si xi
-      appartient la classe k (au sens du MAP) et zero sinon.
-      "
+      "MAP calculates values of the fields \\code{z_ik} and \\code{klas}
+      by applying the Maximum A Posteriori Bayes allocation rule.
+
+      \\eqn{z_{ik} = 1 \\ \textrm{if} \\ k = \\textrm{arg} \\ \\textrm{max}_{s} \\
+      \\pi_{s}(x_{i}; \\boldsymbol{\\Psi});\\ 0 \\ \\textrm{otherwise}}{z_{ik} = 1 if z_ik =
+      arg max_{s} \\pi_{k}(x_{i}; \\Psi); 0 otherwise}"
       N <- nrow(pi_ik)
       K <- ncol(pi_ik)
       ikmax <- max.col(pi_ik)
@@ -115,11 +106,16 @@ StatMRHLP <- setRefClass(
     },
 
     computeLikelihood = function(reg_irls) {
+      "Method to compute the log-likelihood. \\code{reg_irls} is the value of
+      the regularization part in the IRLS algorithm."
       loglik <<- sum(log_sum_piik_fik) + reg_irls
 
     },
 
     computeStats = function(paramMRHLP, cpu_time_all) {
+      "Method used in the EM algorithm to compute statistics based on parameters
+      provided by \\code{paramMRHLP}. It also calculates the average computing time
+      of a single run of the EM algorithm."
       for (k in 1:paramMRHLP$K) {
         polynomials[, , k] <<- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[, , k]
         weighted_polynomials[, , k] <<- (pi_ik[, k] %*% ones(1, paramMRHLP$mData$d)) * polynomials[, , k]
