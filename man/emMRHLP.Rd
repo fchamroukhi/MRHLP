@@ -14,7 +14,7 @@ emMRHLP(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic",
 
 \item{Y}{Matrix of size \eqn{(m, d)} representing a \eqn{d} dimension
 function of \code{X} observed at points \eqn{1,\dots,m}. \code{Y} is the
-observed/response output.}
+observed response/output.}
 
 \item{K}{The number of regimes (MRHLP components).}
 

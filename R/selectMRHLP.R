@@ -10,7 +10,7 @@
 #'   \eqn{x_{1},\dots,x_{m}}.
 #' @param Y Matrix of size \eqn{(m, d)} representing a \eqn{d} dimension
 #'   function of `X` observed at points \eqn{1,\dots,m}. `Y` is the
-#'   observed/response output.
+#'   observed response/output.
 #' @param Kmin The minimum number of regimes (MRHLP components).
 #' @param Kmax The maximum number of regimes (MRHLP components).
 #' @param pmin The minimum order of the polynomial regression.

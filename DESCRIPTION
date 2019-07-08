@@ -1,6 +1,6 @@
 Type: Package
 Package: MRHLP
-Title: Multiple Regression Model with a Hidden Logistic Process (MRHLP) for Joint Segmentation of Multivariate Time Series
+Title: Multiple Regression Model with a Hidden Logistic Process ('MRHLP') for Joint Segmentation of Multivariate Time Series
 Version: 0.1.0
 Authors@R: c(person("Faicel", "Chamroukhi", role = c("aut"),
     email = "faicel.chamroukhi@unicaen.fr",
@@ -35,7 +35,7 @@ Collate:
     StatMRHLP.R
     ModelMRHLP.R
     emMRHLP.R
-    ModelSelection.R
+    selectMRHLP.R
     data-realdataset.R
     data-toydataset.R
 VignetteBuilder: knitr

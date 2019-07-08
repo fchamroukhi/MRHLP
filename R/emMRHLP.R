@@ -15,7 +15,7 @@
 #'   \eqn{x_{1},\dots,x_{m}}.
 #' @param Y Matrix of size \eqn{(m, d)} representing a \eqn{d} dimension
 #'   function of `X` observed at points \eqn{1,\dots,m}. `Y` is the
-#'   observed/response output.
+#'   observed response/output.
 #' @param K The number of regimes (MRHLP components).
 #' @param p Optional. The order of the polynomial regression. By default, `p` is
 #'   set at 3.
@@ -107,13 +107,6 @@ emMRHLP <- function(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic", 
     if (stat$loglik > best_loglik) {
       statSolution <- stat$copy()
       paramSolution <- param$copy()
-      if (param$K == 1) {
-        statSolution$tau_ik <- matrix(stat$tau_ik, nrow = param$mData$m, ncol = 1)
-        statSolution$pi_ik <- matrix(stat$pi_ik, nrow = param$mData$m, ncol = 1)
-      } else {
-        statSolution$tau_ik <- stat$tau_ik[1:param$mData$m,]
-        statSolution$pi_ik <- stat$pi_ik[1:param$mData$m,]
-      }
 
       best_loglik <- stat$loglik
     }

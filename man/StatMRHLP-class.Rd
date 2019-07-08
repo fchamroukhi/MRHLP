@@ -19,9 +19,9 @@ the latent variable \eqn{z_{i}, i = 1,\dots,m}.}
 
 \item{\code{z_ik}}{Hard segmentation logical matrix of dimension \eqn{(m, K)}
 obtained by the Maximum a posteriori (MAP) rule: \eqn{z\_ik = 1 \
-  \textrm{if} \ z\_ik = \textrm{arg} \ \textrm{max}_{k} \ \pi_{k}(x_{i};
-  \boldsymbol{\Psi});\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik = arg max_k
-  \pi_{k}(x_{i}; \Psi); 0 otherwise}, \eqn{k = 1,\dots,K}.}
+  \textrm{if} \ z\_ik = \textrm{arg} \ \textrm{max}_{s} \ \pi_{s}(x_{i};
+  \boldsymbol{\Psi});\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik = arg max_s
+  \pi_{s}(x_{i}; \Psi); 0 otherwise}, \eqn{k = 1,\dots,K}.}
 
 \item{\code{klas}}{Column matrix of the labels issued from \code{z_ik}. Its elements are
 \eqn{klas(i) = k}, \eqn{k = 1,\dots,K}.}
@@ -76,19 +76,21 @@ logarithm of the joint probability \eqn{P(y_{i}, \ z_{i} = k |
 \item{\code{computeLikelihood(reg_irls)}}{Method to compute the log-likelihood. \code{reg_irls} is the value of
 the regularization part in the IRLS algorithm.}
 
-\item{\code{computeStats(paramMRHLP, cpu_time_all)}}{Method used in the EM algorithm to compute statistics based on parameters
-provided by \code{paramMRHLP}. It also calculates the average computing time
-of a single run of the EM algorithm.}
+\item{\code{computeStats(paramMRHLP, cpu_time_all)}}{Method used in the EM algorithm to compute statistics based on
+parameters provided by the object \code{paramMRHLP} of class
+\link{ParamMRHLP}. It also calculates the average computing time of a
+single run of the EM algorithm.}
 
 \item{\code{EStep(paramMRHLP)}}{Method used in the EM algorithm to update statistics based on parameters
-provided by \code{paramMRHLP} (prior and posterior probabilities).}
+provided by the object \code{paramMRHLP} of class \link{ParamMRHLP}
+(prior and posterior probabilities).}
 
 \item{\code{MAP()}}{MAP calculates values of the fields \code{z_ik} and \code{klas}
       by applying the Maximum A Posteriori Bayes allocation rule.
 
-      \eqn{z_{ik} = 1 \     extrm{if} \ k = \textrm{arg} \ \textrm{max}_{s} \
-      \pi_{s}(x_{i}; \boldsymbol{\Psi});\ 0 \ \textrm{otherwise}}{z_{ik} = 1 if z_ik =
-      arg max_{s} \pi_{k}(x_{i}; \Psi); 0 otherwise}}
+      \eqn{z_{ik} = 1 \     extrm{if} \ k = \textrm{arg} \ \textrm{max}_{s}
+      \ \pi_{s}(x_{i}; \boldsymbol{\Psi});\ 0 \ \textrm{otherwise}}{
+      z_{ik} = 1 if z_ik = arg max_{s} \pi_{k}(x_{i}; \Psi); 0 otherwise}}
 }}
 
 \seealso{

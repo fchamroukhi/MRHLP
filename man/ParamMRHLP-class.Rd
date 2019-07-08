@@ -61,7 +61,8 @@ and the logistic regressions.}
       \code{Y} into \code{K} segments.}
 
 \item{\code{MStep(statMRHLP, verbose_IRLS)}}{Method which implements the M-step of the EM algorithm to learn the
-parameters of the MRHLP model based on statistics provided by
-\code{statMRHLP} (which contains the E-step).}
+parameters of the MRHLP model based on statistics provided by the object
+\code{statMRHLP} of class \link{StatMRHLP} (which contains the
+E-step).}
 }}
 

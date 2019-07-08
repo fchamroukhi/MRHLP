@@ -21,9 +21,11 @@ ModelMRHLP <- setRefClass(
       \\describe{
         \\item{\\code{what}}{The type of graph requested:
           \\itemize{
-            \\item \\code{\"regressors\" = } Polynomial regression components.
-            \\item \\code{\"estimatedsignal\" = } Estimated signal (Sum of the
-            polynomial components weighted by the logistic probabilities.
+            \\item \\code{\"regressors\" = } Polynomial regression components
+              (fields \\code{polynomials} and \\code{pi_ik} of class
+              \\link{StatMRHLP}).
+            \\item \\code{\"estimatedsignal\" = } Estimated signal (fields
+              \\code{Ex} and \\code{klas} of class \\link{StatMRHLP}).
           }
         }
       }

@@ -156,8 +156,10 @@ ParamMRHLP <- setRefClass(
 
     MStep = function(statMRHLP, verbose_IRLS) {
       "Method which implements the M-step of the EM algorithm to learn the
-      parameters of the MRHLP model based on statistics provided by
-      \\code{statMRHLP} (which contains the E-step)."
+      parameters of the MRHLP model based on statistics provided by the object
+      \\code{statMRHLP} of class \\link{StatMRHLP} (which contains the
+      E-step)."
+
       # Maximization w.r.t betak and sigmak (the variances)
       if (variance_type == "homoskedastic") {
         s = 0

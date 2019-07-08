@@ -9,9 +9,9 @@
 #'   the latent variable \eqn{z_{i}, i = 1,\dots,m}.
 #' @field z_ik Hard segmentation logical matrix of dimension \eqn{(m, K)}
 #'   obtained by the Maximum a posteriori (MAP) rule: \eqn{z\_ik = 1 \
-#'   \textrm{if} \ z\_ik = \textrm{arg} \ \textrm{max}_{k} \ \pi_{k}(x_{i};
-#'   \boldsymbol{\Psi});\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik = arg max_k
-#'   \pi_{k}(x_{i}; \Psi); 0 otherwise}, \eqn{k = 1,\dots,K}.
+#'   \textrm{if} \ z\_ik = \textrm{arg} \ \textrm{max}_{s} \ \pi_{s}(x_{i};
+#'   \boldsymbol{\Psi});\ 0 \ \textrm{otherwise}}{z_ik = 1 if z_ik = arg max_s
+#'   \pi_{s}(x_{i}; \Psi); 0 otherwise}, \eqn{k = 1,\dots,K}.
 #' @field klas Column matrix of the labels issued from `z_ik`. Its elements are
 #'   \eqn{klas(i) = k}, \eqn{k = 1,\dots,K}.
 #' @field tau_ik Matrix of size \eqn{(m, K)} giving the posterior probability
@@ -91,9 +91,10 @@ StatMRHLP <- setRefClass(
       "MAP calculates values of the fields \\code{z_ik} and \\code{klas}
       by applying the Maximum A Posteriori Bayes allocation rule.
 
-      \\eqn{z_{ik} = 1 \\ \textrm{if} \\ k = \\textrm{arg} \\ \\textrm{max}_{s} \\
-      \\pi_{s}(x_{i}; \\boldsymbol{\\Psi});\\ 0 \\ \\textrm{otherwise}}{z_{ik} = 1 if z_ik =
-      arg max_{s} \\pi_{k}(x_{i}; \\Psi); 0 otherwise}"
+      \\eqn{z_{ik} = 1 \\ \textrm{if} \\ k = \\textrm{arg} \\ \\textrm{max}_{s}
+      \\ \\pi_{s}(x_{i}; \\boldsymbol{\\Psi});\\ 0 \\ \\textrm{otherwise}}{
+      z_{ik} = 1 if z_ik = arg max_{s} \\pi_{k}(x_{i}; \\Psi); 0 otherwise}"
+
       N <- nrow(pi_ik)
       K <- ncol(pi_ik)
       ikmax <- max.col(pi_ik)
@@ -108,14 +109,17 @@ StatMRHLP <- setRefClass(
     computeLikelihood = function(reg_irls) {
       "Method to compute the log-likelihood. \\code{reg_irls} is the value of
       the regularization part in the IRLS algorithm."
+
       loglik <<- sum(log_sum_piik_fik) + reg_irls
 
     },
 
     computeStats = function(paramMRHLP, cpu_time_all) {
-      "Method used in the EM algorithm to compute statistics based on parameters
-      provided by \\code{paramMRHLP}. It also calculates the average computing time
-      of a single run of the EM algorithm."
+      "Method used in the EM algorithm to compute statistics based on
+      parameters provided by the object \\code{paramMRHLP} of class
+      \\link{ParamMRHLP}. It also calculates the average computing time of a
+      single run of the EM algorithm."
+
       for (k in 1:paramMRHLP$K) {
         polynomials[, , k] <<- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[, , k]
         weighted_polynomials[, , k] <<- (pi_ik[, k] %*% ones(1, paramMRHLP$mData$d)) * polynomials[, , k]
@@ -137,7 +141,9 @@ StatMRHLP <- setRefClass(
 
     EStep = function(paramMRHLP) {
       "Method used in the EM algorithm to update statistics based on parameters
-      provided by \\code{paramMRHLP} (prior and posterior probabilities)."
+      provided by the object \\code{paramMRHLP} of class \\link{ParamMRHLP}
+      (prior and posterior probabilities)."
+
       pi_ik <<- multinomialLogit(paramMRHLP$W, paramMRHLP$phi$Xw, ones(paramMRHLP$mData$m, paramMRHLP$K), ones(paramMRHLP$mData$m, 1))$piik
 
       for (k in 1:paramMRHLP$K) {

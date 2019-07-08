@@ -1,4 +1,5 @@
 designmatrix = function(x, p, q = NULL, n = 1) {
+
   order_max <- p
   if (!is.null(q)) {
     order_max <- max(p, q)
@@ -13,15 +14,16 @@ designmatrix = function(x, p, q = NULL, n = 1) {
   # design matrix for Beta (the polynomial regressions)
   if (!is.null(q)) {
     Xw <- X[, 1:(q + 1)]
+    Xw <- repmat(Xw, n, 1)
     # design matrix for w (the logistic regression)
+  } else {
+    Xw <- NULL
   }
 
   XBeta <- repmat(XBeta, n, 1)
-  Xw <- repmat(Xw, n, 1)
 
   return(list(Xw = Xw, XBeta = XBeta))
 }
-
 
 ones <- function(n, d, g = 1) {
   if (g == 1) {
@@ -61,7 +63,6 @@ drnorm <- function(n, d, mean, sd) {
   }
   return(A)
 }
-
 
 lognormalize <- function(M) {
   if (!is.matrix(M)) {
