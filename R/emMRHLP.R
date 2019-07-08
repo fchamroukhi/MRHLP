@@ -132,5 +132,5 @@ emMRHLP <- function(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic", 
   # Finish the computation of statistics
   statSolution$computeStats(paramSolution, cpu_time_all)
 
-  return(ModelMRHLP$new(paramMRHLP = paramSolution, statMRHLP = statSolution))
+  return(ModelMRHLP$new(param = paramSolution, stat = statSolution))
 }

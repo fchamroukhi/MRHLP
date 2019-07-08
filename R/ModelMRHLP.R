@@ -2,17 +2,17 @@
 #'
 #' ModelMRHLP represents an estimated MRHLP model.
 #'
-#' @field paramMRHLP A [ParamMRHLP][ParamMRHLP] object. It contains the
+#' @field param A [ParamMRHLP][ParamMRHLP] object. It contains the
 #'   estimated values of the parameters.
-#' @field statMRHLP A [StatMRHLP][StatMRHLP] object. It contains all the
+#' @field stat A [StatMRHLP][StatMRHLP] object. It contains all the
 #'   statistics associated to the MRHLP model.
 #' @seealso [ParamMRHLP], [StatMRHLP]
 #' @export
 ModelMRHLP <- setRefClass(
   "ModelMRHLP",
   fields = list(
-    paramMRHLP = "ParamMRHLP",
-    statMRHLP = "StatMRHLP"
+    param = "ParamMRHLP",
+    stat = "StatMRHLP"
   ),
   methods = list(
 
@@ -34,28 +34,28 @@ ModelMRHLP <- setRefClass(
       oldpar <- par()[c("mfrow", "mai", "mgp")]
       on.exit(par(oldpar), add = TRUE)
 
-      yaxislim <- c(min(paramMRHLP$mData$Y) - 2 * mean(sqrt(apply(paramMRHLP$mData$Y, 2, var))), max(paramMRHLP$mData$Y) + 2 * mean(sqrt(apply(paramMRHLP$mData$Y, 2, var))))
+      yaxislim <- c(min(param$mData$Y) - 2 * mean(sqrt(apply(param$mData$Y, 2, var))), max(param$mData$Y) + 2 * mean(sqrt(apply(param$mData$Y, 2, var))))
 
       if (any(what == "regressors")) {
         # Data, regressors, and segmentation
         par(mfrow = c(2, 1), mai = c(0.6, 1, 0.5, 0.5), mgp = c(2, 1, 0))
-        matplot(paramMRHLP$mData$X, paramMRHLP$mData$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y", col = gray.colors(paramMRHLP$mData$d), lty = 1)
+        matplot(param$mData$X, param$mData$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y", col = gray.colors(param$mData$d), lty = 1)
         title(main = "Time series, MRHLP regimes, and process probabilites")
-        colorsvec <- rainbow(paramMRHLP$K)
-        for (k in 1:paramMRHLP$K) {
-          index <- (statMRHLP$klas == k)
-          for (d in 1:paramMRHLP$mData$d) {
-            polynomials <- statMRHLP$polynomials[index, d, k]
-            lines(paramMRHLP$mData$X, statMRHLP$polynomials[, d, k], col = colorsvec[k], lty = "dotted", lwd = 1)
-            lines(paramMRHLP$mData$X[index], polynomials, col = colorsvec[k], lwd = 1.5)
+        colorsvec <- rainbow(param$K)
+        for (k in 1:param$K) {
+          index <- (stat$klas == k)
+          for (d in 1:param$mData$d) {
+            polynomials <- stat$polynomials[index, d, k]
+            lines(param$mData$X, stat$polynomials[, d, k], col = colorsvec[k], lty = "dotted", lwd = 1)
+            lines(param$mData$X[index], polynomials, col = colorsvec[k], lwd = 1.5)
           }
         }
 
         # Probablities of the hidden process (segmentation)
-        plot.default(paramMRHLP$mData$X, statMRHLP$pi_ik[, 1], type = "l", xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)), col = colorsvec[1], lwd = 1.5)
-        if (paramMRHLP$K > 1) {
-          for (k in 2:paramMRHLP$K) {
-            lines(paramMRHLP$mData$X, statMRHLP$pi_ik[, k], col = colorsvec[k], lwd = 1.5, ylim = c(0, 1))
+        plot.default(param$mData$X, stat$pi_ik[, 1], type = "l", xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)), col = colorsvec[1], lwd = 1.5)
+        if (param$K > 1) {
+          for (k in 2:param$K) {
+            lines(param$mData$X, stat$pi_ik[, k], col = colorsvec[k], lwd = 1.5, ylim = c(0, 1))
           }
         }
       }
@@ -63,26 +63,26 @@ ModelMRHLP <- setRefClass(
       if (any(what == "estimatedsignal")) {
         # Data, regression model, and segmentation
         par(mfrow = c(2, 1), mai = c(0.6, 1, 0.5, 0.5), mgp = c(2, 1, 0))
-        matplot(paramMRHLP$mData$X, paramMRHLP$mData$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y", col = gray.colors(paramMRHLP$mData$d), lty = 1)
+        matplot(param$mData$X, param$mData$Y, type = "l", ylim = yaxislim, xlab = "x", ylab = "y", col = gray.colors(param$mData$d), lty = 1)
         title(main = "Time series, estimated MRHLP model, and segmentation")
-        for (d in 1:paramMRHLP$mData$d) {
-          lines(paramMRHLP$mData$X, statMRHLP$Ex[, d], col = "red", lwd = 1.5)
+        for (d in 1:param$mData$d) {
+          lines(param$mData$X, stat$Ex[, d], col = "red", lwd = 1.5)
         }
 
         # Transition time points
-        tk = which(diff(statMRHLP$klas) != 0)
+        tk = which(diff(stat$klas) != 0)
         for (i in 1:length(tk)) {
-          abline(v = paramMRHLP$mData$X[tk[i]], col = "red", lty = "dotted", lwd = 1.5)
+          abline(v = param$mData$X[tk[i]], col = "red", lty = "dotted", lwd = 1.5)
         }
 
         # Probablities of the hidden process (segmentation)
-        plot.default(paramMRHLP$mData$X, statMRHLP$klas, type = "l", xlab = "", ylab = "Estimated class labels", col = "red", lwd = 1.5, yaxt = "n")
-        axis(side = 2, at = 1:paramMRHLP$K)
+        plot.default(param$mData$X, stat$klas, type = "l", xlab = "", ylab = "Estimated class labels", col = "red", lwd = 1.5, yaxt = "n")
+        axis(side = 2, at = 1:param$K)
       }
 
       # # Model log-likelihood during EM
       # par(mfrow = c(1, 1))
-      # plot.default(unlist(statMRHLP$stored_loglik), type = "l", xlab = "EM iteration number", ylab = "log-lokelihodd", col = "blue")
+      # plot.default(unlist(stat$stored_loglik), type = "l", xlab = "EM iteration number", ylab = "log-lokelihodd", col = "blue")
     },
 
     summary = function() {
@@ -102,53 +102,53 @@ ModelMRHLP <- setRefClass(
 
       cat("\n")
       cat("\n")
-      cat(paste0("MRHLP model with K = ", paramMRHLP$K, ifelse(paramMRHLP$K > 1, " regimes", " regime")))
+      cat(paste0("MRHLP model with K = ", param$K, ifelse(param$K > 1, " regimes", " regime")))
       cat("\n")
       cat("\n")
 
-      tab <- data.frame("log-likelihood" = statMRHLP$loglik, "nu" = paramMRHLP$nu,
-                   "AIC" = statMRHLP$AIC,"BIC" = statMRHLP$BIC, "ICL" = statMRHLP$ICL,
+      tab <- data.frame("log-likelihood" = stat$loglik, "nu" = param$nu,
+                   "AIC" = stat$AIC,"BIC" = stat$BIC, "ICL" = stat$ICL,
                    row.names = "", check.names = FALSE)
       print(tab, digits = digits)
 
       cat("\nClustering table:")
-      print(table(statMRHLP$klas))
+      print(table(stat$klas))
 
       cat("\n\n")
 
       txt <- paste(rep("-", min(nchar(title), getOption("width"))), collapse = "")
 
-      for (k in 1:paramMRHLP$K) {
+      for (k in 1:param$K) {
         cat(txt)
         cat("\nRegime ", k, " (K = ", k, "):\n", sep = "")
 
         cat("\nRegression coefficients:\n\n")
-        if (paramMRHLP$p > 0) {
-          row.names = c("1", sapply(1:paramMRHLP$p, function(x) paste0("X^", x)))
-          betas <- data.frame(paramMRHLP$beta[, , k], row.names = row.names)
+        if (param$p > 0) {
+          row.names = c("1", sapply(1:param$p, function(x) paste0("X^", x)))
+          betas <- data.frame(param$beta[, , k], row.names = row.names)
         } else {
           row.names = "1"
-          betas <- data.frame(t(paramMRHLP$beta[, , k]), row.names = row.names)
+          betas <- data.frame(t(param$beta[, , k]), row.names = row.names)
         }
 
-        colnames(betas) <- sapply(1:paramMRHLP$mData$d, function(x) paste0("Beta(d = ", x, ")"))
+        colnames(betas) <- sapply(1:param$mData$d, function(x) paste0("Beta(d = ", x, ")"))
         print(betas, digits = digits)
 
-        if (paramMRHLP$variance_type == "heteroskedastic") {
+        if (param$variance_type == "heteroskedastic") {
           cat("\nCovariance matrix:\n")
-          sigma2 <- data.frame(paramMRHLP$sigma2[, , k])
+          sigma2 <- data.frame(param$sigma2[, , k])
           colnames(sigma2) <- NULL
           print(sigma2, digits = digits, row.names = FALSE)
         }
       }
 
-      if (paramMRHLP$variance_type == "homoskedastic") {
+      if (param$variance_type == "homoskedastic") {
         cat("\n")
         txt <- paste(rep("-", min(nchar(title), getOption("width"))), collapse = "")
         cat(txt)
         cat("\nCommon covariance matrix:\n")
         cat(txt)
-        sigma2 <- data.frame(paramMRHLP$sigma2)
+        sigma2 <- data.frame(param$sigma2)
         colnames(sigma2) <- NULL
         print(sigma2, digits = digits, row.names = FALSE)
       }

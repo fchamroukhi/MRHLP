@@ -11,10 +11,10 @@ ModelMRHLP represents an estimated MRHLP model.
 \section{Fields}{
 
 \describe{
-\item{\code{paramMRHLP}}{A \link{ParamMRHLP} object. It contains the
+\item{\code{param}}{A \link{ParamMRHLP} object. It contains the
 estimated values of the parameters.}
 
-\item{\code{statMRHLP}}{A \link{StatMRHLP} object. It contains all the
+\item{\code{stat}}{A \link{StatMRHLP} object. It contains all the
 statistics associated to the MRHLP model.}
 }}
 

@@ -30,9 +30,9 @@ selectMRHLP <- function(X, Y, Kmin = 1, Kmax = 10, pmin = 0, pmax = 4, criterion
   mrhlp <- outer(Kmin:Kmax, pmin:pmax, vmrhlp)
 
   if (criterion == "BIC") {
-    results <- apply(mrhlp, 1:2, function(x) x[[1]]$statMRHLP$BIC)
+    results <- apply(mrhlp, 1:2, function(x) x[[1]]$stat$BIC)
   } else {
-    results <- apply(mrhlp, 1:2, function(x) x[[1]]$statMRHLP$AIC)
+    results <- apply(mrhlp, 1:2, function(x) x[[1]]$stat$AIC)
   }
   rownames(results) <- sapply(Kmin:Kmax, function(x) paste0("(K = ", x, ")"))
   colnames(results) <- sapply(pmin:pmax, function(x) paste0("(p = ", x, ")"))
@@ -41,11 +41,11 @@ selectMRHLP <- function(X, Y, Kmin = 1, Kmax = 10, pmin = 0, pmax = 4, criterion
   selected <- mrhlp[which(results == max(results), arr.ind = T)][[1]]
 
   cat(paste0("The MRHLP model selected via the \"", criterion, "\" has K = ",
-             selected$paramMRHLP$K, " regimes \n and the order of the ",
-             "polynomial regression is p = ", selected$paramMRHLP$p, "."))
+             selected$param$K, " regimes \n and the order of the ",
+             "polynomial regression is p = ", selected$param$p, "."))
   cat("\n")
-  cat(paste0("BIC = ", selected$statMRHLP$BIC, "\n"))
-  cat(paste0("AIC = ", selected$statMRHLP$AIC, "\n"))
+  cat(paste0("BIC = ", selected$stat$BIC, "\n"))
+  cat(paste0("AIC = ", selected$stat$AIC, "\n"))
 
   return(selected)
 
