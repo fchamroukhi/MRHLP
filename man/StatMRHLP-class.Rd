@@ -66,8 +66,6 @@ logarithm of the joint probability \eqn{P(y_{i}, \ z_{i} = k |
 \eqn{\textrm{log} \sum_{k = 1}^{K} P(y_{i}, \ z_{i} = k | \boldsymbol{x},
   \boldsymbol{\Psi})}{log \sum_{k = 1}^{K} P(y_{i}, z_{i} = k | x, \Psi)},
 \eqn{i = 1,\dots,m}.}
-
-\item{\code{cpu_time}}{Numeric. Average computing time of a EM algorithm run.}
 }}
 
 \section{Methods}{
@@ -76,10 +74,9 @@ logarithm of the joint probability \eqn{P(y_{i}, \ z_{i} = k |
 \item{\code{computeLikelihood(reg_irls)}}{Method to compute the log-likelihood. \code{reg_irls} is the value of
 the regularization part in the IRLS algorithm.}
 
-\item{\code{computeStats(paramMRHLP, cpu_time_all)}}{Method used in the EM algorithm to compute statistics based on
+\item{\code{computeStats(paramMRHLP)}}{Method used in the EM algorithm to compute statistics based on
 parameters provided by the object \code{paramMRHLP} of class
-\link{ParamMRHLP}. It also calculates the average computing time of a
-single run of the EM algorithm.}
+\link{ParamMRHLP}.}
 
 \item{\code{EStep(paramMRHLP)}}{Method used in the EM algorithm to update statistics based on parameters
 provided by the object \code{paramMRHLP} of class \link{ParamMRHLP}

@@ -54,7 +54,6 @@ emMRHLP <- function(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic", 
   top <- 0
   try_EM <- 0
   best_loglik <- -Inf
-  cpu_time_all <- c()
 
   while (try_EM < n_tries) {
     try_EM <- try_EM + 1
@@ -62,8 +61,6 @@ emMRHLP <- function(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic", 
     if (n_tries > 1 && verbose) {
       cat(paste0("EM try number: ", try_EM, "\n\n"))
     }
-
-    time <- Sys.time()
 
     # Initialization
     variance_type <- match.arg(variance_type)
@@ -102,8 +99,6 @@ emMRHLP <- function(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic", 
       stat$stored_loglik[iter] <- stat$loglik
     } # End of the EM loop
 
-    cpu_time_all[try_EM] <- Sys.time() - time
-
     if (stat$loglik > best_loglik) {
       statSolution <- stat$copy()
       paramSolution <- param$copy()
@@ -123,7 +118,7 @@ emMRHLP <- function(X, Y, K, p = 3, q = 1, variance_type = c("heteroskedastic", 
   }
 
   # Finish the computation of statistics
-  statSolution$computeStats(paramSolution, cpu_time_all)
+  statSolution$computeStats(paramSolution)
 
   return(ModelMRHLP$new(param = paramSolution, stat = statSolution))
 }

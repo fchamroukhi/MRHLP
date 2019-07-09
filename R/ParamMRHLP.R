@@ -96,9 +96,9 @@ ParamMRHLP <- setRefClass(
           j <- k * zi
 
           yk <- mData$Y[i:j,]
-          Xk <- as.matrix(phi$XBeta[i:j,])
+          Xk <- phi$XBeta[i:j, , drop = FALSE]
 
-          beta[, , k] <<- solve(t(Xk) %*% Xk) %*% t(Xk) %*% yk
+          beta[, , k] <<- solve(t(Xk) %*% Xk, tol = 0) %*% t(Xk) %*% yk
 
           muk <- Xk %*% beta[, , k]
           sk <- t(yk - muk) %*% (yk - muk)
@@ -136,7 +136,7 @@ ParamMRHLP <- setRefClass(
           j <- tk_init[k + 1]
 
           yk <- mData$Y[i:j,]
-          Xk <- phi$XBeta[i:j,]
+          Xk <- phi$XBeta[i:j, ,  drop = FALSE]
 
           beta[, , k] <<- solve(t(Xk) %*% Xk, tol = 0) %*% t(Xk) %*% yk
 

@@ -42,7 +42,6 @@
 #'   \eqn{\textrm{log} \sum_{k = 1}^{K} P(y_{i}, \ z_{i} = k | \boldsymbol{x},
 #'   \boldsymbol{\Psi})}{log \sum_{k = 1}^{K} P(y_{i}, z_{i} = k | x, \Psi)},
 #'   \eqn{i = 1,\dots,m}.
-#' @field cpu_time Numeric. Average computing time of a EM algorithm run.
 #' @seealso [ParamMRHLP]
 #' @export
 StatMRHLP <- setRefClass(
@@ -59,7 +58,6 @@ StatMRHLP <- setRefClass(
     BIC = "numeric",
     ICL = "numeric",
     AIC = "numeric",
-    cpu_time = "numeric",
     log_piik_fik = "matrix",
     log_sum_piik_fik = "matrix",
     tau_ik = "matrix",
@@ -79,7 +77,6 @@ StatMRHLP <- setRefClass(
       BIC <<- -Inf
       ICL <<- -Inf
       AIC <<- -Inf
-      cpu_time <<- Inf
       log_piik_fik <<- matrix(0, paramMRHLP$mData$m, paramMRHLP$K)
       log_sum_piik_fik <<- matrix(NA, paramMRHLP$mData$m, 1)
       tau_ik <<- matrix(0, paramMRHLP$mData$m, paramMRHLP$K)
@@ -114,11 +111,10 @@ StatMRHLP <- setRefClass(
 
     },
 
-    computeStats = function(paramMRHLP, cpu_time_all) {
+    computeStats = function(paramMRHLP) {
       "Method used in the EM algorithm to compute statistics based on
       parameters provided by the object \\code{paramMRHLP} of class
-      \\link{ParamMRHLP}. It also calculates the average computing time of a
-      single run of the EM algorithm."
+      \\link{ParamMRHLP}."
 
       for (k in 1:paramMRHLP$K) {
         polynomials[, , k] <<- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[, , k]
@@ -127,7 +123,6 @@ StatMRHLP <- setRefClass(
 
       Ex <<- apply(weighted_polynomials, c(1, 2), sum)
 
-      cpu_time <<- mean(cpu_time_all)
       BIC <<- loglik - (paramMRHLP$nu * log(paramMRHLP$mData$m) / 2)
       AIC <<- loglik - paramMRHLP$nu
 
@@ -154,7 +149,7 @@ StatMRHLP <- setRefClass(
           sigma2k <- paramMRHLP$sigma2[, , k]
         }
 
-        z <- ((paramMRHLP$mData$Y - muk) %*% solve(sigma2k)) * (paramMRHLP$mData$Y - muk)
+        z <- ((paramMRHLP$mData$Y - muk) %*% solve(sigma2k, tol = 0)) * (paramMRHLP$mData$Y - muk)
 
         mahalanobis <- matrix(rowSums(z))
 
