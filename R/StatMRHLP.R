@@ -2,9 +2,9 @@
 #'
 #' StatMRHLP contains all the statistics associated to a [MRHLP][ParamMRHLP]
 #' model.
-#' It mainly includes the E-Step of the EM algorithm calculating the posterior distribution of the hidden variables, 
+#' It mainly includes the E-Step of the EM algorithm calculating the posterior distribution of the hidden variables,
 #' as well as the calculation of the log-likelhood at each step of the algorithm and the obtained values of model selection criteria..
-#' 
+#'
 #' @field pi_ik Matrix of size \eqn{(m, K)} representing the prior/logistic
 #'   probabilities \eqn{\pi_{k}(x_{i}; \boldsymbol{\Psi}) = P(z_{i} = k |
 #'   \boldsymbol{x}; \Psi)}{\pi_{k}(x_{i}; \Psi) = P(z_{i} = k | x; \Psi)} of
@@ -85,15 +85,15 @@ StatMRHLP <- setRefClass(
       polynomials <<- array(NA, dim = c(paramMRHLP$mData$m, paramMRHLP$mData$d, paramMRHLP$K))
       weighted_polynomials <<- array(NA, dim = c(paramMRHLP$mData$m, paramMRHLP$mData$d, paramMRHLP$K))
     },
-    
+
     MAP = function() {
       "MAP calculates values of the fields \\code{z_ik} and \\code{klas}
       by applying the Maximum A Posteriori Bayes allocation rule.
-      
-      \\eqn{z_{ik} = 1 \\ \textrm{if} \\ k = \\textrm{arg} \\ \\textrm{max}_{s}
+
+      \\eqn{z_{ik} = 1 \\ \\textrm{if} \\ k = \\textrm{arg} \\ \\textrm{max}_{s}
       \\ \\pi_{s}(x_{i}; \\boldsymbol{\\Psi});\\ 0 \\ \\textrm{otherwise}}{
       z_{ik} = 1 if z_ik = arg max_{s} \\pi_{k}(x_{i}; \\Psi); 0 otherwise}"
-      
+
       N <- nrow(pi_ik)
       K <- ncol(pi_ik)
       ikmax <- max.col(pi_ik)
@@ -104,45 +104,45 @@ StatMRHLP <- setRefClass(
         klas[z_ik[, k] == 1] <<- k
       }
     },
-    
+
     computeLikelihood = function(reg_irls) {
       "Method to compute the log-likelihood. \\code{reg_irls} is the value of
       the regularization part in the IRLS algorithm."
-      
+
       loglik <<- sum(log_sum_piik_fik) + reg_irls
-      
+
     },
-    
+
     computeStats = function(paramMRHLP) {
       "Method used in the EM algorithm to compute statistics based on
       parameters provided by the object \\code{paramMRHLP} of class
       \\link{ParamMRHLP}."
-      
+
       for (k in 1:paramMRHLP$K) {
         polynomials[, , k] <<- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[, , k]
         weighted_polynomials[, , k] <<- (pi_ik[, k] %*% ones(1, paramMRHLP$mData$d)) * polynomials[, , k]
       }
-      
+
       Ex <<- apply(weighted_polynomials, c(1, 2), sum)
-      
+
       BIC <<- loglik - (paramMRHLP$nu * log(paramMRHLP$mData$m) / 2)
       AIC <<- loglik - paramMRHLP$nu
-      
+
       zik_log_alphag_fg_xij <- (z_ik) * (log_piik_fik)
-      
+
       com_loglik <<- sum(rowSums(zik_log_alphag_fg_xij))
-      
-      
+
+
       ICL <<- com_loglik - paramMRHLP$nu * log(paramMRHLP$mData$m) / 2
     },
-    
+
     EStep = function(paramMRHLP) {
       "Method used in the EM algorithm to update statistics based on parameters
       provided by the object \\code{paramMRHLP} of class \\link{ParamMRHLP}
       (prior and posterior probabilities)."
-      
+
       pi_ik <<- multinomialLogit(paramMRHLP$W, paramMRHLP$phi$Xw, ones(paramMRHLP$mData$m, paramMRHLP$K), ones(paramMRHLP$mData$m, 1))$piik
-      
+
       for (k in 1:paramMRHLP$K) {
         muk <- paramMRHLP$phi$XBeta %*% paramMRHLP$beta[, , k]
         if (paramMRHLP$variance_type == "homoskedastic") {
@@ -150,20 +150,20 @@ StatMRHLP <- setRefClass(
         } else {
           sigma2k <- paramMRHLP$sigma2[, , k]
         }
-        
+
         z <- ((paramMRHLP$mData$Y - muk) %*% solve(sigma2k, tol = 0)) * (paramMRHLP$mData$Y - muk)
-        
+
         mahalanobis <- matrix(rowSums(z))
-        
+
         denom <- (2 * pi) ^ (paramMRHLP$mData$d / 2) * (det(as.matrix(sigma2k))) ^ 0.5
-        
+
         log_piik_fik[, k] <<- log(pi_ik[, k]) - ones(paramMRHLP$mData$m, 1) %*% log(denom) - 0.5 * mahalanobis
       }
-      
+
       log_piik_fik <<- pmax(log_piik_fik, log(.Machine$double.xmin))
       piik_fik <- exp(log_piik_fik)
       log_sum_piik_fik <<- matrix(log(rowSums(piik_fik)))
-      
+
       log_tauik <- log_piik_fik - log_sum_piik_fik %*% ones(1, paramMRHLP$K)
       tau_ik <<- normalize(exp(log_tauik), 2)$M
     }
