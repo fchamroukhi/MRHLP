@@ -15,30 +15,30 @@ ModelMRHLP <- setRefClass(
     stat = "StatMRHLP"
   ),
   methods = list(
-
+    
     plot = function(what = c("regressors", "estimatedsignal"), ...) {
       "Plot method.
       \\describe{
-        \\item{\\code{what}}{The type of graph requested:
-          \\itemize{
-            \\item \\code{\"regressors\" = } Polynomial regression components
-              (fields \\code{polynomials} and \\code{pi_ik} of class
-              \\link{StatMRHLP}).
-            \\item \\code{\"estimatedsignal\" = } Estimated signal (fields
-              \\code{Ex} and \\code{klas} of class \\link{StatMRHLP}).
-          }
-        }
-        \\item{\\code{\\dots}}{Other graphics parameters.}
+      \\item{\\code{what}}{The type of graph requested:
+      \\itemize{
+      \\item \\code{\"regressors\" = } Polynomial regression components
+      (fields \\code{polynomials} and \\code{pi_ik} of class
+      \\link{StatMRHLP}).
+      \\item \\code{\"estimatedsignal\" = } Estimated signal (fields
+      \\code{Ex} and \\code{klas} of class \\link{StatMRHLP}).
       }
-      By default, all the above graphs are produced."
-
+      }
+      \\item{\\code{\\dots}}{Other graphics parameters.}
+      }
+      By default, all the graphs mentioned above are produced."
+      
       what <- match.arg(what, several.ok = TRUE)
-
+      
       oldpar <- par(no.readonly = TRUE)
       on.exit(par(oldpar), add = TRUE)
-
+      
       yaxislim <- c(min(param$mData$Y) - 2 * mean(sqrt(apply(param$mData$Y, 2, var))), max(param$mData$Y) + 2 * mean(sqrt(apply(param$mData$Y, 2, var))))
-
+      
       if (any(what == "regressors")) {
         # Data, regressors, and segmentation
         par(mfrow = c(2, 1), mai = c(0.6, 1, 0.5, 0.5), mgp = c(2, 1, 0))
@@ -53,7 +53,7 @@ ModelMRHLP <- setRefClass(
             lines(param$mData$X[index], polynomials, col = colorsvec[k], lwd = 1.5, ...)
           }
         }
-
+        
         # Probablities of the hidden process (segmentation)
         plot.default(param$mData$X, stat$pi_ik[, 1], type = "l", xlab = "x", ylab = expression('Probability ' ~ pi [k] (t, w)), col = colorsvec[1], lwd = 1.5, ...)
         if (param$K > 1) {
@@ -62,7 +62,7 @@ ModelMRHLP <- setRefClass(
           }
         }
       }
-
+      
       if (any(what == "estimatedsignal")) {
         # Data, regression model, and segmentation
         par(mfrow = c(2, 1), mai = c(0.6, 1, 0.5, 0.5), mgp = c(2, 1, 0))
@@ -71,73 +71,73 @@ ModelMRHLP <- setRefClass(
         for (d in 1:param$mData$d) {
           lines(param$mData$X, stat$Ex[, d], col = "red", lwd = 1.5, ...)
         }
-
+        
         # Transition time points
         tk = which(diff(stat$klas) != 0)
         for (i in 1:length(tk)) {
           abline(v = param$mData$X[tk[i]], col = "red", lty = "dotted", lwd = 1.5, ...)
         }
-
+        
         # Probablities of the hidden process (segmentation)
         plot.default(param$mData$X, stat$klas, type = "l", xlab = "", ylab = "Estimated class labels", col = "red", lwd = 1.5, yaxt = "n", ...)
         axis(side = 2, at = 1:param$K, ...)
       }
-
+      
       # # Model log-likelihood during EM
       # par(mfrow = c(1, 1))
       # plot.default(unlist(stat$stored_loglik), type = "l", xlab = "EM iteration number", ylab = "log-lokelihodd", col = "blue")
-    },
-
+      },
+    
     summary = function(digits = getOption("digits")) {
       "Summary method.
       \\describe{
-        \\item{\\code{digits}}{The number of significant digits to use when
-          printing.}
+      \\item{\\code{digits}}{The number of significant digits to use when
+      printing.}
       }"
 
       title <- paste("Fitted MRHLP model")
       txt <- paste(rep("-", min(nchar(title) + 4, getOption("width"))), collapse = "")
-
+      
       # Title
       cat(txt)
       cat("\n")
       cat(title)
       cat("\n")
       cat(txt)
-
+      
       cat("\n")
       cat("\n")
       cat(paste0("MRHLP model with K = ", param$K, ifelse(param$K > 1, " regimes", " regime")))
       cat("\n")
       cat("\n")
-
+      
       tab <- data.frame("log-likelihood" = stat$loglik, "nu" = param$nu,
-                   "AIC" = stat$AIC,"BIC" = stat$BIC, "ICL" = stat$ICL,
-                   row.names = "", check.names = FALSE)
+                        "AIC" = stat$AIC,"BIC" = stat$BIC, "ICL" = stat$ICL,
+                        row.names = "", check.names = FALSE)
       print(tab, digits = digits)
-
+      
       cat("\nClustering table:")
       print(table(stat$klas))
-
+      
       cat("\n\n")
-
+      
       txt <- paste(rep("-", min(nchar(title), getOption("width"))), collapse = "")
-
+      
       for (k in 1:param$K) {
         cat(txt)
         cat("\nRegime ", k, " (K = ", k, "):\n", sep = "")
-
+        
         cat("\nRegression coefficients:\n\n")
         if (param$p > 0) {
           row.names = c("1", sapply(1:param$p, function(x) paste0("X^", x)))
         } else {
           row.names = "1"
         }
-
+        
         betas <- data.frame(param$beta[, , k, drop = FALSE], row.names = row.names)
         colnames(betas) <- sapply(1:param$mData$d, function(x) paste0("Beta(d = ", x, ")"))
         print(betas, digits = digits)
-
+        
         if (param$variance_type == "heteroskedastic") {
           cat("\nCovariance matrix:\n")
           sigma2 <- data.frame(param$sigma2[, , k])
@@ -145,7 +145,7 @@ ModelMRHLP <- setRefClass(
           print(sigma2, digits = digits, row.names = FALSE)
         }
       }
-
+      
       if (param$variance_type == "homoskedastic") {
         cat("\n")
         txt <- paste(rep("-", min(nchar(title), getOption("width"))), collapse = "")
@@ -156,7 +156,7 @@ ModelMRHLP <- setRefClass(
         colnames(sigma2) <- NULL
         print(sigma2, digits = digits, row.names = FALSE)
       }
-
+      
     }
   )
 )

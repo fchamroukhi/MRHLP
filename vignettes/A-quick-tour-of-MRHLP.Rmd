@@ -31,7 +31,11 @@ library(MRHLP)
 
 # Introduction
 
-**MRHLP** is a R package for segmentation. It provides functions for parameter estimation via the EM algorithm. This document gives a quick tour of **MRHLP** (version `r packageVersion("MRHLP")`) functionalities. It was written in R Markdown, using the [knitr](https://cran.r-project.org/package=knitr) package for production. 
+**MRHLP** is an R package for flexible and user-friendly probabilistic joint segmentation of 
+multivariate time series (or multivariate structured longitudinal data) with smooth and/or 
+abrupt regime changes by a mixture model-based multiple regression approach 
+with a hidden logistic process, fitted by the EM algorithm.
+This document gives a quick tour of **MRHLP** (version `r packageVersion("MRHLP")`) functionalities. It was written in R Markdown, using the [knitr](https://cran.r-project.org/package=knitr) package for production. 
 See `help(package="MRHLP")` for further details and references provided by `citation("MRHLP")`.
 
 # Load simulated data

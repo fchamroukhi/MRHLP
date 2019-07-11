@@ -17,11 +17,16 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-User-friendly and flexible algorithm for time series **segmentation** of multivariate time series with a Multiple Regression model with a Hidden Logistic Process (MRHLP).
+
+**MRHLP** is an R package for flexible and user-friendly **probabilistic** joint **segmentation** of 
+multivariate time series (or multivariate structured longitudinal data) with smooth and/or 
+abrupt regime changes by a mixture model-based multiple regression approach 
+with a hidden logistic process (Multiple Regression model with a Hidden Logistic Process (MRHLP)). The model is fitted by the EM algorithm.
+
 
 ## Installation
 
-You can install the development version of MRHLP from [GitHub](https://github.com/) with:
+You can install the MRHLP package from [GitHub](https://github.com/) with:
 
 ```{r, eval = FALSE}
 # install.packages("devtools")
