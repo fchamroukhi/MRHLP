@@ -12,11 +12,11 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-"
 )
 ```
-## Overview
 
 <!-- badges: start -->
 <!-- badges: end -->
 
+## Overview
 
 **MRHLP** is an R package for flexible and user-friendly **probabilistic** joint **segmentation** of 
 multivariate time series (or multivariate structured longitudinal data) with smooth and/or 
