@@ -16,15 +16,17 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-## Overview
+# Overview
 
-**MRHLP** is an R package for flexible and user-friendly **probabilistic** joint **segmentation** of 
-multivariate time series (or multivariate structured longitudinal data) with smooth and/or 
-abrupt regime changes by a mixture model-based multiple regression approach 
-with a hidden logistic process (Multiple Regression model with a Hidden Logistic Process (MRHLP)). The model is fitted by the EM algorithm.
+**MRHLP** is an R package for flexible and user-friendly **probabilistic** 
+joint **segmentation** of multivariate time series (or multivariate structured
+longitudinal data) with smooth and/or abrupt regime changes by a mixture 
+model-based multiple regression approach with a hidden logistic process 
+(Multiple Regression model with a Hidden Logistic Process (MRHLP)). The model 
+is fitted by the EM algorithm.
 
 
-## Installation
+# Installation
 
 You can install the MRHLP package from [GitHub](https://github.com/) with:
 
@@ -48,12 +50,39 @@ Use the following command to display vignettes:
 browseVignettes("MRHLP")
 ```
 
-## Usage
+# Usage
 
 ```{r, message = FALSE}
 library(MRHLP)
+```
 
+```{r, message = FALSE}
+# Application to a toy data set
 data("toydataset")
+
+K <- 5 # Number of regimes (mixture components)
+p <- 1 # Dimension of beta (order of the polynomial regressors)
+q <- 1 # Dimension of w (order of the logistic regression: to be set to 1 for segmentation)
+variance_type <- "heteroskedastic" # "heteroskedastic" or "homoskedastic" model
+
+n_tries <- 1
+max_iter <- 1500
+threshold <- 1e-6
+verbose <- TRUE
+verbose_IRLS <- FALSE
+
+mrhlp <- emMRHLP(toydataset$x, toydataset[,c("y1", "y2", "y3")], 
+                 K, p, q, variance_type, n_tries, max_iter, threshold, verbose,
+                 verbose_IRLS)
+
+mrhlp$summary()
+
+mrhlp$plot()
+```
+
+```{r, message = FALSE}
+# Application to a real data set (human activity recogntion data)
+data("realdataset")
 
 K <- 5 # Number of regimes (mixture components)
 p <- 3 # Dimension of beta (order of the polynomial regressors)
@@ -66,10 +95,36 @@ threshold <- 1e-6
 verbose <- TRUE
 verbose_IRLS <- FALSE
 
-mrhlp <- emMRHLP(toydataset$x, toydataset[,c("y1", "y2", "y3")], K, p, q, 
-                 variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
+mrhlp <- emMRHLP(realdataset$x, realdataset[,c("y1", "y2", "y3")], 
+                 K, p, q, variance_type, n_tries, max_iter, threshold, verbose,
+                 verbose_IRLS)
 
 mrhlp$summary()
 
 mrhlp$plot()
+```
+
+# Model selection
+
+In this package, it is possible to select models based on information criteria 
+such as **BIC**, **AIC** and **ICL**.
+
+The selection can be done for the two following parameters:
+
+ * **K**: The number of regimes;
+ * **p**: The order of the polynomial regression.
+ 
+Let's select a MRHLP model for the following multivariate time series **Y**:
+
+```{r}
+data("toydataset")
+x <- toydataset$x
+y <- toydataset[, c("y1", "y2", "y3")]
+matplot(x, y, type = "l", xlab = "x", ylab = "Y", lty = 1)
+```
+
+```{r, message = FALSE}
+selectedmrhlp <- selectMRHLP(X = x, Y = y, Kmin = 2, Kmax = 6, pmin = 0, pmax = 3)
+
+selectedmrhlp$plot(what = "estimatedsignal")
 ```
