@@ -24,16 +24,20 @@
 #' @return selectMRHLP returns an object of class [ModelMRHLP][ModelMRHLP]
 #'   representing the selected MRHLP model according to the chosen `criterion`.
 #' @seealso [ModelMRHLP]
-#' @examples
-#' data(toydataset)
-#' x = toydataset$x
-#' y = toydataset[, c("y1", "y2", "y3")]
+#' @export
 #'
-#' selectedmrhlp <- selectMRHLP(X = x, Y = y, Kmin = 4, Kmax = 5,
-#'                              pmin = 0, pmax = 2)
+#' @examples
+#' data(multivtoydataset)
+#'
+#' # Let's select a MRHLP model on a multivariate time series with 3 regimes:
+#' data <- multivtoydataset[1:320, ]
+#' x <- data$x
+#' y <- data[, c("y1", "y2", "y3")]
+#'
+#' selectedmrhlp <- selectMRHLP(X = x, Y = y, Kmin = 2, Kmax = 4,
+#'                              pmin = 0, pmax = 1)
 #'
 #' selectedmrhlp$summary()
-#' @export
 selectMRHLP <- function(X, Y, Kmin = 1, Kmax = 10, pmin = 0, pmax = 4, criterion = c("BIC", "AIC"), verbose = TRUE) {
 
   criterion <- match.arg(criterion)

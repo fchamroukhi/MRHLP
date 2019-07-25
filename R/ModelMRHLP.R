@@ -7,10 +7,12 @@
 #' @field stat A [StatMRHLP][StatMRHLP] object. It contains all the statistics
 #'   associated to the MRHLP model.
 #' @seealso [ParamMRHLP], [StatMRHLP]
-#' @examples
-#' data(toydataset)
+#' @export
 #'
-#' mrhlp <- emMRHLP(toydataset$x, toydataset[,c("y1", "y2", "y3")],
+#' @examples
+#' data(multivtoydataset)
+#'
+#' mrhlp <- emMRHLP(multivtoydataset$x, multivtoydataset[,c("y1", "y2", "y3")],
 #'                  K = 5, p = 1, verbose = TRUE)
 #'
 #' # mrhlp is a ModelMRHLP object. It contains some methods such as 'summary' and 'plot'
@@ -24,8 +26,6 @@
 #'
 #' # Parameters of the polynomial regressions:
 #' mrhlp$param$beta
-#'
-#' @export
 ModelMRHLP <- setRefClass(
   "ModelMRHLP",
   fields = list(
