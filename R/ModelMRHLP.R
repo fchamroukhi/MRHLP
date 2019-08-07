@@ -10,10 +10,11 @@
 #' @export
 #'
 #' @examples
-#' data(multivtoydataset)
+#' data(toydataset)
+#' x <- toydataset$x
+#' y <- toydataset[,c("y1", "y2", "y3")]
 #'
-#' mrhlp <- emMRHLP(multivtoydataset$x, multivtoydataset[,c("y1", "y2", "y3")],
-#'                  K = 5, p = 1, verbose = TRUE)
+#' mrhlp <- emMRHLP(X = x, Y = y, K = 5, p = 1, verbose = TRUE)
 #'
 #' # mrhlp is a ModelMRHLP object. It contains some methods such as 'summary' and 'plot'
 #' mrhlp$summary()
@@ -148,7 +149,7 @@ ModelMRHLP <- setRefClass(
 
       for (k in 1:param$K) {
         cat(txt)
-        cat("\nRegime ", k, " (K = ", k, "):\n", sep = "")
+        cat("\nRegime ", k, " (k = ", k, "):\n", sep = "")
 
         cat("\nRegression coefficients:\n\n")
         if (param$p > 0) {

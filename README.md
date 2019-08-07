@@ -49,6 +49,8 @@ library(MRHLP)
 ``` r
 # Application to a toy data set
 data("toydataset")
+x <- toydataset$x
+y <- toydataset[,c("y1", "y2", "y3")]
 
 K <- 5 # Number of regimes (mixture components)
 p <- 1 # Dimension of beta (order of the polynomial regressors)
@@ -61,29 +63,28 @@ threshold <- 1e-6
 verbose <- TRUE
 verbose_IRLS <- FALSE
 
-mrhlp <- emMRHLP(toydataset$x, toydataset[,c("y1", "y2", "y3")], 
-                 K, p, q, variance_type, n_tries, max_iter, threshold, verbose,
-                 verbose_IRLS)
-#> EM: Iteration : 1 || log-likelihood : -4807.6644322901
-#> EM: Iteration : 2 || log-likelihood : -3314.25165556383
-#> EM: Iteration : 3 || log-likelihood : -3216.8871750704
-#> EM: Iteration : 4 || log-likelihood : -3126.33556053822
-#> EM: Iteration : 5 || log-likelihood : -2959.59933830667
-#> EM: Iteration : 6 || log-likelihood : -2895.65953485704
-#> EM: Iteration : 7 || log-likelihood : -2892.93263500326
-#> EM: Iteration : 8 || log-likelihood : -2889.34084959654
-#> EM: Iteration : 9 || log-likelihood : -2884.56422084139
-#> EM: Iteration : 10 || log-likelihood : -2878.29772085061
-#> EM: Iteration : 11 || log-likelihood : -2870.61242183846
-#> EM: Iteration : 12 || log-likelihood : -2862.86238149363
-#> EM: Iteration : 13 || log-likelihood : -2856.85351443338
-#> EM: Iteration : 14 || log-likelihood : -2851.74642203885
-#> EM: Iteration : 15 || log-likelihood : -2850.00381259526
-#> EM: Iteration : 16 || log-likelihood : -2849.86516522686
-#> EM: Iteration : 17 || log-likelihood : -2849.7354103643
-#> EM: Iteration : 18 || log-likelihood : -2849.56953544124
-#> EM: Iteration : 19 || log-likelihood : -2849.40322468732
-#> EM: Iteration : 20 || log-likelihood : -2849.40321381274
+mrhlp <- emMRHLP(X = x, Y = y, K, p, q, variance_type, n_tries, 
+                 max_iter, threshold, verbose, verbose_IRLS)
+#> EM - MRHLP: Iteration: 1 | log-likelihood: -4807.6644322901
+#> EM - MRHLP: Iteration: 2 | log-likelihood: -3314.25165556383
+#> EM - MRHLP: Iteration: 3 | log-likelihood: -3216.8871750704
+#> EM - MRHLP: Iteration: 4 | log-likelihood: -3126.33556053822
+#> EM - MRHLP: Iteration: 5 | log-likelihood: -2959.59933830667
+#> EM - MRHLP: Iteration: 6 | log-likelihood: -2895.65953485704
+#> EM - MRHLP: Iteration: 7 | log-likelihood: -2892.93263500326
+#> EM - MRHLP: Iteration: 8 | log-likelihood: -2889.34084959654
+#> EM - MRHLP: Iteration: 9 | log-likelihood: -2884.56422084139
+#> EM - MRHLP: Iteration: 10 | log-likelihood: -2878.29772085061
+#> EM - MRHLP: Iteration: 11 | log-likelihood: -2870.61242183846
+#> EM - MRHLP: Iteration: 12 | log-likelihood: -2862.86238149363
+#> EM - MRHLP: Iteration: 13 | log-likelihood: -2856.85351443338
+#> EM - MRHLP: Iteration: 14 | log-likelihood: -2851.74642203885
+#> EM - MRHLP: Iteration: 15 | log-likelihood: -2850.00381259526
+#> EM - MRHLP: Iteration: 16 | log-likelihood: -2849.86516522686
+#> EM - MRHLP: Iteration: 17 | log-likelihood: -2849.7354103643
+#> EM - MRHLP: Iteration: 18 | log-likelihood: -2849.56953544124
+#> EM - MRHLP: Iteration: 19 | log-likelihood: -2849.40322468732
+#> EM - MRHLP: Iteration: 20 | log-likelihood: -2849.40321381274
 
 mrhlp$summary()
 #> ----------------------
@@ -101,7 +102,7 @@ mrhlp$summary()
 #> 
 #> 
 #> ------------------
-#> Regime 1 (K = 1):
+#> Regime 1 (k = 1):
 #> 
 #> Regression coefficients:
 #> 
@@ -115,7 +116,7 @@ mrhlp$summary()
 #>  0.12765794  0.87144062 -0.05213162
 #>  0.05537134 -0.05213162  0.87885166
 #> ------------------
-#> Regime 2 (K = 2):
+#> Regime 2 (k = 2):
 #> 
 #> Regression coefficients:
 #> 
@@ -129,7 +130,7 @@ mrhlp$summary()
 #>  -0.1829337  1.05280632 0.01390041
 #>   0.1260246  0.01390041 0.75995058
 #> ------------------
-#> Regime 3 (K = 3):
+#> Regime 3 (k = 3):
 #> 
 #> Regression coefficients:
 #> 
@@ -143,7 +144,7 @@ mrhlp$summary()
 #>  -0.05445227  1.18941700  0.01565240
 #>  -0.02019896  0.01565240  1.00257195
 #> ------------------
-#> Regime 4 (K = 4):
+#> Regime 4 (k = 4):
 #> 
 #> Regression coefficients:
 #> 
@@ -157,7 +158,7 @@ mrhlp$summary()
 #>  -0.03249118  1.12087583 -0.07881351
 #>  -0.03411075 -0.07881351  0.86060127
 #> ------------------
-#> Regime 5 (K = 5):
+#> Regime 5 (k = 5):
 #> 
 #> Regression coefficients:
 #> 
@@ -179,6 +180,8 @@ mrhlp$plot()
 ``` r
 # Application to a real data set (human activity recogntion data)
 data("realdataset")
+x <- realdataset$x
+y <- realdataset[,c("y1", "y2", "y3")]
 
 K <- 5 # Number of regimes (mixture components)
 p <- 3 # Dimension of beta (order of the polynomial regressors)
@@ -191,34 +194,33 @@ threshold <- 1e-6
 verbose <- TRUE
 verbose_IRLS <- FALSE
 
-mrhlp <- emMRHLP(realdataset$x, realdataset[,c("y1", "y2", "y3")], 
-                 K, p, q, variance_type, n_tries, max_iter, threshold, verbose,
-                 verbose_IRLS)
-#> EM: Iteration : 1 || log-likelihood : -792.888668727036
-#> EM: Iteration : 2 || log-likelihood : 6016.45835957306
-#> EM: Iteration : 3 || log-likelihood : 6362.81791662824
-#> EM: Iteration : 4 || log-likelihood : 6615.72233403002
-#> EM: Iteration : 5 || log-likelihood : 6768.32107943849
-#> EM: Iteration : 6 || log-likelihood : 6840.97339565987
-#> EM: Iteration : 7 || log-likelihood : 6860.97262839295
-#> EM: Iteration : 8 || log-likelihood : 6912.25605673784
-#> EM: Iteration : 9 || log-likelihood : 6945.96718258737
-#> EM: Iteration : 10 || log-likelihood : 6951.28584396645
-#> EM: Iteration : 11 || log-likelihood : 6952.37644678517
-#> EM: Iteration : 12 || log-likelihood : 6954.80510338749
-#> EM: Iteration : 13 || log-likelihood : 6958.99033092484
-#> EM: Iteration : 14 || log-likelihood : 6964.81099837456
-#> EM: Iteration : 15 || log-likelihood : 6999.90358068156
-#> EM: Iteration : 16 || log-likelihood : 7065.39327246318
-#> EM: Iteration : 17 || log-likelihood : 7166.23398344994
-#> EM: Iteration : 18 || log-likelihood : 7442.73330846285
-#> EM: Iteration : 19 || log-likelihood : 7522.65416438396
-#> EM: Iteration : 20 || log-likelihood : 7524.41524338024
-#> EM: Iteration : 21 || log-likelihood : 7524.57590110924
-#> EM: Iteration : 22 || log-likelihood : 7524.73808801417
-#> EM: Iteration : 23 || log-likelihood : 7524.88684996651
-#> EM: Iteration : 24 || log-likelihood : 7524.9753964817
-#> EM: Iteration : 25 || log-likelihood : 7524.97701548847
+mrhlp <- emMRHLP(X = x, Y = y, K, p, q, variance_type, n_tries, 
+                 max_iter, threshold, verbose, verbose_IRLS)
+#> EM - MRHLP: Iteration: 1 | log-likelihood: -792.888668727036
+#> EM - MRHLP: Iteration: 2 | log-likelihood: 6016.45835957306
+#> EM - MRHLP: Iteration: 3 | log-likelihood: 6362.81791662824
+#> EM - MRHLP: Iteration: 4 | log-likelihood: 6615.72233403002
+#> EM - MRHLP: Iteration: 5 | log-likelihood: 6768.32107943849
+#> EM - MRHLP: Iteration: 6 | log-likelihood: 6840.97339565987
+#> EM - MRHLP: Iteration: 7 | log-likelihood: 6860.97262839295
+#> EM - MRHLP: Iteration: 8 | log-likelihood: 6912.25605673784
+#> EM - MRHLP: Iteration: 9 | log-likelihood: 6945.96718258737
+#> EM - MRHLP: Iteration: 10 | log-likelihood: 6951.28584396645
+#> EM - MRHLP: Iteration: 11 | log-likelihood: 6952.37644678517
+#> EM - MRHLP: Iteration: 12 | log-likelihood: 6954.80510338749
+#> EM - MRHLP: Iteration: 13 | log-likelihood: 6958.99033092484
+#> EM - MRHLP: Iteration: 14 | log-likelihood: 6964.81099837456
+#> EM - MRHLP: Iteration: 15 | log-likelihood: 6999.90358068156
+#> EM - MRHLP: Iteration: 16 | log-likelihood: 7065.39327246318
+#> EM - MRHLP: Iteration: 17 | log-likelihood: 7166.23398344994
+#> EM - MRHLP: Iteration: 18 | log-likelihood: 7442.73330846285
+#> EM - MRHLP: Iteration: 19 | log-likelihood: 7522.65416438396
+#> EM - MRHLP: Iteration: 20 | log-likelihood: 7524.41524338024
+#> EM - MRHLP: Iteration: 21 | log-likelihood: 7524.57590110924
+#> EM - MRHLP: Iteration: 22 | log-likelihood: 7524.73808801417
+#> EM - MRHLP: Iteration: 23 | log-likelihood: 7524.88684996651
+#> EM - MRHLP: Iteration: 24 | log-likelihood: 7524.9753964817
+#> EM - MRHLP: Iteration: 25 | log-likelihood: 7524.97701548847
 
 mrhlp$summary()
 #> ----------------------
@@ -236,7 +238,7 @@ mrhlp$summary()
 #> 
 #> 
 #> ------------------
-#> Regime 1 (K = 1):
+#> Regime 1 (k = 1):
 #> 
 #> Regression coefficients:
 #> 
@@ -252,7 +254,7 @@ mrhlp$summary()
 #>  -0.0042380363  0.006082904 -0.0012973026
 #>   0.0004011388 -0.001297303  0.0013201963
 #> ------------------
-#> Regime 2 (K = 2):
+#> Regime 2 (k = 2):
 #> 
 #> Regression coefficients:
 #> 
@@ -268,7 +270,7 @@ mrhlp$summary()
 #>  -0.03866052  0.17730401  0.04036629
 #>  -0.06693441  0.04036629  0.11983979
 #> ------------------
-#> Regime 3 (K = 3):
+#> Regime 3 (k = 3):
 #> 
 #> Regression coefficients:
 #> 
@@ -284,7 +286,7 @@ mrhlp$summary()
 #>  -1.330363e-04  0.0006297205 2.027763e-04
 #>   5.289199e-05  0.0002027763 1.374405e-03
 #> ------------------
-#> Regime 4 (K = 4):
+#> Regime 4 (k = 4):
 #> 
 #> Regression coefficients:
 #> 
@@ -300,7 +302,7 @@ mrhlp$summary()
 #>  -0.017661572  0.047588713 0.007867532
 #>   0.002139975  0.007867532 0.067150809
 #> ------------------
-#> Regime 5 (K = 5):
+#> Regime 5 (k = 5):
 #> 
 #> Regression coefficients:
 #> 
@@ -346,7 +348,7 @@ matplot(x, y, type = "l", xlab = "x", ylab = "Y", lty = 1)
 ``` r
 selectedmrhlp <- selectMRHLP(X = x, Y = y, Kmin = 2, Kmax = 6, pmin = 0, pmax = 3)
 #> Warning in emMRHLP(X = X1, Y = Y1, K, p): EM log-likelihood is decreasing
-#> from -3105.78591044952to -3105.78627830471 !
+#> from -3105.78591044952to -3105.78627830471!
 #> The MRHLP model selected via the "BIC" has K = 5 regimes 
 #>  and the order of the polynomial regression is p = 0.
 #> BIC = -3033.20042397111

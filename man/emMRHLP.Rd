@@ -67,10 +67,11 @@ convergence (until the relative variation of log-likelihood between two
 steps of the EM algorithm is less than the \code{threshold} parameter).
 }
 \examples{
-data(multivtoydataset)
+data(toydataset)
+x <- toydataset$x
+y <- toydataset[,c("y1", "y2", "y3")]
 
-mrhlp <- emMRHLP(multivtoydataset$x, multivtoydataset[,c("y1", "y2", "y3")],
-                 K = 5, p = 1, verbose = TRUE)
+mrhlp <- emMRHLP(X = x, Y = y, K = 5, p = 1, verbose = TRUE)
 
 mrhlp$summary()
 

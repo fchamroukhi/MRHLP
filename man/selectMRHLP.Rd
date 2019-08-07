@@ -47,10 +47,10 @@ model having the highest value of the chosen selection criterion is then
 selected.
 }
 \examples{
-data(multivtoydataset)
+data(toydataset)
 
 # Let's select a MRHLP model on a multivariate time series with 3 regimes:
-data <- multivtoydataset[1:320, ]
+data <- toydataset[1:320, ]
 x <- data$x
 y <- data[, c("y1", "y2", "y3")]
 

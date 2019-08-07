@@ -48,6 +48,8 @@ See `help(package="MRHLP")` for further details and references provided by
 
 ```{r}
 data("toydataset")
+x <- toydataset$x
+y <- toydataset[, c("y1", "y2", "y3")]
 ```
 
 ## Set up MRHLP model parameters
@@ -69,12 +71,11 @@ verbose <- TRUE
 verbose_IRLS <- FALSE
 ```
 
-
 ## Estimation
 
 ```{r}
-mrhlp <- emMRHLP(toydataset$x, toydataset[,c("y1", "y2", "y3")], K, p, q, 
-                 variance_type, n_tries, max_iter, threshold, verbose, verbose_IRLS)
+mrhlp <- emMRHLP(X = x, Y = y, K, p, q, variance_type, n_tries, 
+                 max_iter, threshold, verbose, verbose_IRLS)
 ```
 
 ## Summary
